@@ -1,0 +1,3434 @@
+
+---
+title: "Statistical Analysis of Contextual Effects on Case in Japanese Copular Constructions"
+author: Masashi Harada
+date: "April 2025"
+output:
+  bookdown::html_document2: 
+    number_sections: true
+    toc: true
+    toc_depth: 3
+bibliography: Eval2.bib
+citation_package: natbib
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+# Set the CRAN mirror (if I remove this, I get an issue when fitting a model using lmer in the section about Linzen and Oseki's study)
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
+# Load necessary packages (if I remove this, I get an issue when fitting a model using lmer in the section about Linzen and Oseki's study)
+if (!requireNamespace("lme4", quietly = TRUE)) {
+  install.packages("lme4")
+}
+if (!requireNamespace("Matrix", quietly = TRUE)) {
+  install.packages("Matrix")
+}
+
+# Note: if there is a special character in the path (as well as the file name), it delays knitting and it sometimes even prevents knitting. 
+
+```
+
+
+
+
+
+
+# Introduction {#Introduction}
+
+This paper presents a statistical analysis of an experiment focusing on morphological case in Japanese.
+The study explores whether there is a significant difference in the acceptability of a specific type of Japanese copular sentence when used in two distinct contexts.
+Preliminary informal data collected by the author suggested that context plays a role in determining sentence acceptability, though individual variability was also observed [@Harada2018Contextual].
+To address this, a formal experiment with a larger sample size was conducted to draw more reliable conclusions.
+It will be shown that the contextual effect on the sentence acceptability is statistically significant at the traditional α = 0.05 level. 
+
+The paper is structured as follows:
+Section \@ref(Phenomenon-under-investigation-and-hypothesis) provides a brief explanation of the phenomenon under investigation.
+Section \@ref(Overview-of-the-experiment) outlines the experimental design.
+Section \@ref(Analysis-of-experiment-results) presents the statistical analysis of the experiment's results.
+Finally, Section \@ref(Conclusion) concludes the paper.
+Note that Sections \@ref(Phenomenon-under-investigation-and-hypothesis)-\@ref(Overview-of-the-experiment) are adapted from @Harada2024Addressing for readability.
+As a result, readers familiar with @Harada2024Addressing may skip directly to Section \@ref(Analysis-of-experiment-results).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Phenomenon Under Investigation and Hypothesis {#Phenomenon-under-investigation-and-hypothesis}
+
+The experiment explored a phenomenon in Japanese copular constructions where the predicate can sometimes take an accusative case marker and sometimes cannot.
+Sentence (1) illustrates this phenomenon:
+
+1. *kyoo-wa onigiri-o mit-tu dayo*
+    + *kyoo-wa*: today-TOP
+    + *onigiri-o*: rice.ball-Acc
+    + *mit-tu*: three-Classifier
+    + *dayo*: copula 
+    + Meaching: `Today is three rice balls.'
+
+
+In (1), the predicate *onigiri-o mit-tu* ‘three rice balls’ can optionally take the accusative case marker -o.
+The acceptability of the accusative case depends on the context in which the sentence is uttered.
+For example, sentence (1) sounds natural in the context provided in (2a) but not in the context given in (2b):
+
+
+2.  a. Ken is Ai's father and always cooks lunch for her. It's now 6am, and Ai has just come into the kitchen. Ken says (1) to Ai.
+
+    b. Ken and Ai have long been monitoring when different kinds of food in their showcase go bad. Ken always checks at 4pm which food items and how many of them have spoiled. It's now 4pm, and Ai has just come to the showcase. Looking at the food, Ken says (1) to Ai.
+
+
+This variability in the acceptability of the accusative case across contexts raises several descriptive and theoretical questions.
+One key question is: what kinds of contexts allow the accusative case?
+In response, @Harada2018Contextual offers a descriptive generalization, summarized in (3):
+
+3. The predicate accusative case in Japanese copular sentences is available only when the context supports the accommodation of a question that:
+    a. if expressed linguistically, contains an accusative case-marked wh-item, and
+    b. is answered by the copular sentence.
+
+I refer to wh-questions that meet the conditions in (3) as wh~Acc~-questions.
+
+I demonstrate that while the context in (2a) accommodates a wh~Acc~-question, the context in (2b) does not. 
+As a result, only the context in (2a) allows the predicate accusative case. 
+First, consider the wh~Acc~-question accommodated in (2a), shown in (4):
+
+
+4. *Ken-wa nani-o tukutta-no*
+    + *Ken-wa*: Ken-TOP
+    + *nani-o*: what-Acc
+    + *tukutta-no*: made-Question.marker
+    + Meaching: `What did Ken make?'
+
+The question in (4), which contains an accusative case-marked wh-item, is contextually salient because Ken cooks lunch for Ai every morning, and (1) is uttered in the morning. 
+Additionally, the copular sentence in (1) answers the question in (4). Thus, (4) is a wh~Acc~-question accommodated in (2a).
+
+In contrast, it is difficult to imagine a wh~Acc~-question in context (2b). 
+The most natural wh-question to accommodate in (2b) that is answered by (1) would be (5). 
+However, this question does not contain an accusative case-marked wh-item, so it is not a wh~Acc~-question:
+
+
+5. *kyoo-wa nani-ga/\*o kusatta?*
+    + *kyoo-wa*: today-TOP
+    + *nani-ga/o*: what-Nom/Acc
+    + *kusatta*: went.bad
+    + Meaching: `What has gone bad today?'
+
+To summarize, the availability of the predicate accusative case depends on the utterance context and appears to be governed by the conditions in (3). 
+However, as mentioned in Section \@ref(Introduction), there are some differences in acceptability among individuals. 
+Therefore, the proposed experiment examines whether (3) is a correct generalization of when the predicate accusative case is available.
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+# Overview of the experiment {#Overview-of-the-experiment}
+
+## Participants {#Participants}
+
+I recruited 94 native Japanese speakers for the experiment through a platform called CrowdWorks.
+The initial target sample size of the experiment was 88 participants, it was determined by conducting a simulation to avoid underestimating the sample size and reduce the risk of Type II errors, as well as Type M and Type S errors.
+The simulation was conducted using a created dataframe and a linear mixed-effects model, which were based on acceptability judgment data from @LinzenANDOseki2018reliability.
+The simulation suggested that with 88 participants, the experiment would have a power of 0.83 (95% confidence interval: 0.82, 0.84). 
+For more details on the power calculation, see @Harada2024Addressing.
+
+During the recruitment process, more participants than requested responded to the experiment invitation on CrowdWorks. 
+While 88 participants officially submitted the task on the platform, complete responses/ratings from 94 participants were recorded in my database. 
+After reviewing the data, I decided to include all 94 participants in the analysis for two reasons: 
+(1) excluding additional participants who provided complete and valid responses would unnecessarily reduce the sample size, and (2) some participants from the original 88 have to be excluded due to completing the experiment too quickly or providing unusual ratings. 
+Including the additional participants helped maintain a robust sample size for analysis.
+
+Ten participants were excluded based on the following criteria: 
+(1) the short time they spent completing the experiment, (2) unusual ratings of fillers and anchor items, and/or (3) low standard deviation of ratings.
+The detailed definition of these criteria and the exclusion process are discussed in Section \@ref(Data-preprocessing).
+As a result of these exclusions, the current study has responses from 84 participants. Following @LinzenANDOseki2018reliability, I confirmed that all the participants meet two conditions: 
+(i) they lived in Japan from birth until at least age 13, and (ii) their parents spoke Japanese to them at home.
+
+I recruited speakers of any dialect as it was not clear whether speakers of different Japanese dialects might show varying patterns in acceptability judgments for sentences in the Tokyo dialect used in this study. 
+As a result, the experiment included participants who speak various dialects, such as Kanto dialects (37 participants), Kansai dialect (17 participants), and other regional dialects.
+Since the sample size of speakers of each dialect is small except for Kanto dialects, I decided to divide the participants into speakers of Eastern Japanese dialect (45 participants) and Western Japanese dialect (38 participants).
+The total is 83 instead of 84 because one participant reported speaking both Eastern and Western Japanese dialects, and it was unclear which dialect was more prominent.
+It should also be noted that when dividing the participants into speakers of Eastern and Western Japanese dialects, I assigned speakers of Gifu, Mikawa, and Nagoya dialects (5 speakers in total) to the group of Western dialect speakers.
+While such speakers are sometimes considered Eastern Japanese dialect speakers, I made this decision because fewer speakers of the Western dialect were recruited in the current study.
+It will be shown that there is a marginally significant difference between Eastern and Western dialect speakers in their ratings of main sentences at the traditional α = 0.05 level.
+
+Similarly, I included both linguists and non-linguists in the experiment. 
+While there is some evidence suggesting that these two groups may provide different judgments [e.g., @Spencer1973differences; @GordonANDHendrick1997intuitive; @Dabrowska2010naive], it remains unclear whether linguists should avoid collecting data from fellow linguists [e.g., @SchutzeANDSprouse2014judgment].
+On one hand, linguists’ judgments may be influenced by their theoretical perspectives [e.g., @EdelmanANDChristiansen2003seriously; @WasowANDArnold2005intuitions; @GibsonANDFedorenko2013need], but on the other hand, they might also be more attuned to subtle differences in acceptability that non-linguists might miss [e.g., @Newmeyer1983grammatical; @Grewendorf2007empirical].
+I asked participants in the questionnaire whether they had studied linguistics.
+It turns out that of the 84 participants, only 4 reported having studied linguistics.
+Among these, 3 showed a large difference in ratings between condition 0 and condition 1 sentences.
+However, the small sample size of participants with linguistics training limits the generalizability of this observation.
+
+Lastly, the experiment also asked participants about the foreign languages they had studied.
+Some participants reported studying languages, including Chinese, English, French, German, Korean, and/or Spanish.
+Among these participants, 22 seemed to be able to manage basic conversation in English, and one participant each for Chinese and Spanish, based on the following certificates/experiences (no participants who reported studying French, German, or Korean provided information about their proficiency in those languages):
+
+- **Chinese**: A participant who has Grade 2 of the Test of Chinese Proficiency in Japan and studied in a Chinese-speaking country for at least one year.
+- **English**: Participants who (i) have a TOEIC score of 600 or above, (ii) have Eiken (The EIKEN Test in Practical English Proficiency) Grade 2, and/or (iii) studied in English-speaking countries for at least one year. 
+- **Spanish**: A participant who lived in Spanish-speaking countries for more than 10 years.
+
+It will be shown that foreign language experience is a marginally significant effect on the rating of main sentences at the traditional α = 0.05 level.
+For simplicity, this paper refers to participants who can manage basic conversation in Chinese, English, or Spanish as *bilingual speakers/participants*, in contrast to other participants, who are referred to as *monolingual speakers/participants*.
+
+
+In Section \@ref(Analysis-of-experiment-results), we will briefly touch on how participants' native dialects, linguistics background, and foreign language experiences affect their ratings of main items in the experiment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Materials {#Materials}
+
+The experiment involved 10 main items, each consisting of the same sequence of Japanese copular sentences uttered in two different contexts, resulting in 20 main sentences.
+For example, one item included sentence (1) in context (2a) and sentence (1) in context (2b).
+To minimize the effect of particular lexical items, we used 10 main items, consistent with Schütze and Sprouse's [-@SchutzeANDSprouse2014judgment] recommendation to include at least 8 items to reduce lexical effects. While more items could increase the experiment’s power, 10 items were used to prevent participant fatigue or boredom.
+
+The 10 main items were divided into two lists—**List 1** and **List 2**—using a Latin square design. 
+For example, if **List 1** included **item　1**-**condition 0** (main items predicted to sound natural), **List 2** included **item 1**-**condition 1**(main items predicted to sound unnatural). 
+Each participant was exposed to one version of either **List 1** or **List 2**, ensuring that each participant encountered only one condition per item, resulting in exposure to 10 main sentences.
+
+To ensure pseudorandomization, the main items were ordered such that at least one filler item separated any two main items, and **acc.ok** (main items predicted to sound natural) alternated with **acc.bad** (main items predicted to sound unnatural), with filler items interspersed.
+Twice as many filler sentences as main sentences were included, following \@Cowart1997experimental, for three reasons: (i) to encourage use of the full range of the 7-point Likert scale (1 = least natural, 7 = most natural), (ii) to include diverse constructions to prevent influence from salient features of the main items, and (iii) to obscure the experiment’s intent. 
+In addition to main and filler items, three anchor sentences were included at the beginning of each item set in the same order across all participants. 
+These anchor sentences were designed to encourage use of the full scale and prevent biases such as skew or compression.
+
+Each list consisted of four versions of item sets (i.e., main items, fillers, and anchors), created by counterbalancing the order of items to mitigate potential effects such as fatigue or response biases. These four orders were: **original**, **reversed**, **split**, and **split-reversed**.
+Thus, the final design resulted in eight versions of item sets, divided into **List 1** and **List 2**, with four versions per list.
+Each participant was exposed to one version, viewing 33 sentences in total: 3 anchor sentences, 10 main sentences, and 20 filler sentences.
+
+
+The table below illustrates the structure of these item sets, including the placement of main items (**acc.ok** and **acc.bad**), filler items (F), and anchor sentences (A):
+
+
+<div style="display: flex; justify-content: space-between;">
+
+<div style="width: 11%;">
+
+| List1.original | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| acc.ok.03    |  
+| F03          | 
+| F16          |
+| F09          |
+| acc.bad.04   |
+| F01          |
+| F17          |
+| acc.ok.07    |
+| F15          |
+| acc.bad.08   |
+| F19          |
+| acc.ok.09    |
+| F08          |
+| F14          |
+| acc.bad.06   |
+| F18          |
+| F12          |
+| F11          |
+| F05          |
+| F20          |
+| F04          |
+| acc.ok.05    |
+| F07          |
+| F02          |
+| F06          |
+| acc.bad.02   |
+| F10          |
+| acc.ok.01    |
+| F13          |
+| acc.bad.10   |
+
+</div>
+
+<div style="width: 11%;">
+
+| List1.reversed | 
+|----------|
+| A1 |
+| A2 |
+| A3 |
+| acc.bad.10 |
+| F13 |
+| acc.ok.01 |
+| F10 |
+| acc.bad.02 |
+| F06 |
+| F02 |
+| F07 |
+| acc.ok.05 |
+| F04 |
+| F20 |
+| F05 |
+| F11 |
+| F12 |
+| F18 |
+| acc.bad.06 |
+| F14 |
+| F08 |
+| acc.ok.09 |
+| F19 |
+| acc.bad.08 |
+| F15 |
+| acc.ok.07 |
+| F17 |
+| F01 |
+| acc.bad.04 |
+| F09 |
+| F16 |
+| F03 |
+| acc.ok.03 |
+
+</div>
+
+<div style="width: 11%;">
+
+| List1.split | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| F18          |
+| F12          |
+| F11          |
+| F05          |
+| F20          |
+| F04          |
+| acc.ok.05    |
+| F07          |
+| F02          |
+| F06          |
+| acc.bad.02   |
+| F10          |
+| acc.ok.01    |
+| F13          |
+| acc.bad.10   |
+| F03        | 
+| F16         |
+| acc.ok.03    |  
+| F09          |
+| acc.bad.04   |
+| F01          |
+| F17          |
+| acc.ok.07    |
+| F15          |
+| acc.bad.08   |
+| F19          |
+| acc.ok.09    |
+| F08          |
+| F14          |
+| acc.bad.06   |
+
+
+</div>
+
+<div style="width: 18%;">
+
+| List1.split-reversed | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| acc.bad.06 |
+| F14 |
+| F08 |
+| acc.ok.09 |
+| F19 |
+| acc.bad.08 |
+| F15 |
+| acc.ok.07 |
+| F17 |
+| F01 |
+| acc.bad.04 |
+| F09 |
+| acc.ok.03 |
+| F16 |
+| F03 |
+| acc.bad.10 |
+| F13 |
+| acc.ok.01 |
+| F10 |
+| acc.bad.02 |
+| F06 |
+| F02 |
+| F07 |
+| acc.ok.05 |
+| F04 |
+| F20 |
+| F05 |
+| F11 |
+| F12 |
+| F18 |
+
+
+</div>
+
+<div style="width: 11%;">
+
+| List2.original | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| acc.bad.03   |  
+| F07          | 
+| acc.ok.04    |
+| F08          |
+| F17          |
+| F19          |
+| F15          |
+| F11          |
+| F20          |
+| acc.bad.07   |
+| F06          |
+| acc.ok.10    |
+| F13          |
+| acc.bad.05   |
+| F01          |
+| F10          |
+| F16          |
+| F05          |
+| acc.ok.06    |
+| F04          |
+| F18          |
+| acc.bad.01   |
+| F02          |
+| acc.ok.08    |
+| F09          |
+| F03          |
+| acc.bad.09   |
+| F12          |
+| F14          |
+| acc.ok.02    |
+
+</div>
+
+<div style="width: 11%;">
+
+| List2.reversed | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| acc.ok.02 |
+| F14 |
+| F12 |
+| acc.bad.09 |
+| F03 |
+| F09 |
+| acc.ok.08 |
+| F02 |
+| acc.bad.01 |
+| F18 |
+| F04 |
+| acc.ok.06 |
+| F05 |
+| F16 |
+| F10 |
+| F01 |
+| acc.bad.05 |
+| F13 |
+| acc.ok.10 |
+| F06 |
+| acc.bad.07 |
+| F20 |
+| F11 |
+| F15 |
+| F19 |
+| F17 |
+| F08 |
+| acc.ok.04 |
+| F07 |
+| acc.bad.03 |
+
+</div>
+
+<div style="width: 11%;">
+
+| List2.split | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| F10          |
+| F16          |
+| F05          |
+| acc.ok.06    |
+| F04          |
+| F18          |
+| acc.bad.01   |
+| F02          |
+| acc.ok.08    |
+| F09          |
+| F03          |
+| acc.bad.09   |
+| F12          |
+| acc.ok.02    |
+| F14          |
+| acc.bad.03   |  
+| F07          | 
+| acc.ok.04    |
+| F08          |
+| F17          |
+| F19          |
+| F15          |
+| F11          |
+| F20          |
+| acc.bad.07   |
+| F06          |
+| acc.ok.10    |
+| F13          |
+| acc.bad.05   |
+| F01          |
+
+</div>
+
+<div style="width: 18%;">
+
+| List2.split-reversed | 
+|----------|
+| A1           |
+| A2           |
+| A3           |
+| F01 |
+| acc.bad.05 |
+| F13 |
+| acc.ok.10 |
+| F06 |
+| acc.bad.07 |
+| F20 |
+| F11 |
+| F15 |
+| F19 |
+| F17 |
+| F08 |
+| acc.ok.04 |
+| F07 |
+| acc.bad.03 |
+| F14 |
+| acc.ok.02 |
+| F12 |
+| acc.bad.09 |
+| F03 |
+| F09 |
+| acc.ok.08 |
+| F02 |
+| acc.bad.01 |
+| F18 |
+| F04 |
+| acc.ok.06 |
+| F05 |
+| F16 |
+| F10 |
+</div>
+
+</div>
+
+This table demonstrates how pseudorandomization and counterbalancing were implemented to ensure that each participant received a well-balanced set of items. For additional details about the creation of the item sets and their randomized ordering, see @Harada2024Addressing.
+
+Since this experiment involved 84 participants and each participant was exposed to 10 main sentences, acceptability ratings for 840 main sentences should have been collected.
+However, it turned out that two participants rated certain filler items twice and missed rating a specific main item.[^1]
+As a result, acceptability ratings for 858 main sentences were collected.
+
+
+[^1]: These errors are likely due to collection issues caused by the Heroku app (the platform used to run the experiment) rather than flaws in the experimental design.
+If the issue were design-related, more participants assigned the same item sets would have exhibited similar patterns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Procedures {#Procedures}
+
+The experiment took place online.
+Participants first answered a questionnaire about their language background and familiarity with linguistics.
+Then, they were introduced to the concept of sentence naturalness as used in this experiment.
+The instructions emphasized that participants should disregard prescriptive grammar rules, the likelihood of the sentence being spoken in real life, and the plausibility of the sentence content.
+Following @SchutzeANDSprouse2014judgment, the experiment described these points by providing the Japanese counterparts of the following sentences:
+
+6.    In determining if a sentence sounds natural or unnatural, you can imagine a conversation with a friend and consider whether the sentence would make them sound like a native Japanese speaker. The experiment is not concerned with whether the sentence is "good Japanese" for writing, the best way to convey the speaker's idea, how often it is used in daily speech, or the likelihood of the provided context occurring in real life. You should ignore the Japanese grammar you learned in school or any prescriptive rules you have heard of (e.g., ra-nuki speech). The focus is on whether the sentence could be naturally spoken by native speakers, assuming no production errors.
+
+After the explanation, participants were presented with three anchor sentences:
+one that is clearly natural (acceptability = 6~7), one that is clearly unnatural (acceptability = 1~2), and one with controversial acceptability (acceptability = 3~5).
+Following this, participants proceeded to rate the main and filler items.
+
+The experiment took around 30 minutes on average, including instructions and brief questionnaires.
+
+
+
+
+
+
+
+
+
+
+
+# Analysis of Experiment Results {#Analysis-of-experiment-results}
+
+This section analyzes the results of the experiment.
+First, after setting up the working directory where the CSV file containing the experiment results is located, we read the CSV file using *tidyverse*.
+
+
+
+
+```{r message=FALSE}
+# Load a package to use read_csv().
+library(tidyverse)
+# Read a CSV file.
+experimentResult_original <- read_csv('experimentResult.csv')
+```
+Using **dplyer**, we first check the average ratings of three anchor sentences. 
+
+```{r, message=FALSE}
+# Load packages for filter(), group_by(), summarise(), etc.
+library(dplyr)
+```
+
+```{r}
+# Calculate the average ratings of anchor sentences. 
+averageRatings_practice <- experimentResult_original %>%
+  filter(experiment_id == "Practice") %>% 
+  group_by(item_id) %>%
+  summarise(average_rating = mean(rating, na.rm = TRUE), .groups = "drop")
+
+# Print the result of the calculation. 
+print(averageRatings_practice, n = Inf)
+```
+
+Anchor sentences 1, 2, and 3 are designed to be rated 6-7, 1-2, and 3-5, respectively, to help participants understand the correspondence between the 7-point Likert scale values and the naturalness of sentences.
+As you can see above, each of the anchor sentences was rated appropriately.
+
+Next, we turn to examining the average ratings of condition 0 and condition 1 for the main items.
+
+
+```{r}
+# Calculate the average ratings of condition 0 and 1 of main items.  
+averageRatings_averageAccCase <- experimentResult_original %>%
+  filter(experiment_id == "AccCase") %>%  
+  group_by(condition) %>%
+  summarise(average_rating = mean(rating, na.rm = TRUE), .groups = "drop")
+
+print(averageRatings_averageAccCase, n = Inf)
+```
+
+The condition 0 sentences are rated higher than the condition 1 sentences on average by 3.39.
+The sentences in the two conditions appear to differ significantly, given that the difference between the clearly natural anchor sentence 1 (6.09) and the clearly unnatural anchor sentence 2 (2.42) is 3.67.
+
+To further explore the difference between sentences in condition 0 and condition 1, we examine the difference between the two conditions for each main item.
+
+
+```{r 0vs1ratingByItem, fig.cap="Trend lines and individual data points showing rating distributions across experimental conditions for all test items. Pink dots (condition 0) consistently cluster at higher ratings (around 5-6), while teal dots (condition 1) cluster at lower ratings (around 1-2). The blue trend lines demonstrate a consistent downward pattern across all ten items, indicating a robust effect of the experimental manipulation that is independent of lexical variation."}
+
+# Calculate the average ratings and differences between condition 0 and condition 1 for each item.
+itemBy_averageRating_accCase <- experimentResult_original %>%
+  filter(experiment_id == "AccCase") %>%  
+  group_by(item_id) %>% 
+  summarise(
+    avgRating_condition0 = mean(rating[condition == 0], na.rm = TRUE),
+    avgRating_condition1 = mean(rating[condition == 1], na.rm = TRUE),
+    diff_condition_0_1 = avgRating_condition0 - avgRating_condition1 
+  ) 
+
+# Custom labeller to add "item" before the item number
+custom_labeller <- function(labels) {
+  labels$item_id <- paste0("item ", labels$item_id)
+  labels
+}
+
+# Visualize raw data points and linear trend lines by condition for each item.
+ggplot(experimentResult_original %>% filter(experiment_id == "AccCase"), aes(x = factor(condition), y = rating)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +  
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +  
+  facet_wrap(~ item_id, labeller = custom_labeller) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +  # Restrict x-axis to "0" and "1"
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Trend Lines and Raw Data by Condition for Each Item"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  
+  )
+
+```
+
+The figure shows the trend lines and raw data points for ratings of each item under the two experimental conditions, labeled as 0 and 1.
+For each item, the ratings in condition 0 appear to be generally higher than in condition 1, with the trend line indicating a downward slope from condition 0 to condition 1.
+This suggests that the experimental manipulation had a consistent effect on participant ratings and that the overall average ratings of condition 0 and 1 sentences (5.66 and 2.27, respectively) are due to the difference in condition, not caused by specific lexical items used in the sentences.
+
+Lastly, we examine the difference between the two conditions for each participant.
+
+
+
+```{r 0vs1ratingByParticipant, fig.width=15, fig.height=15, warning=TRUE, fig.cap="Trend lines and raw daata across the two experimental conditions for each participant. The majority of participants exhibit a downward trend in the measured variable from condition 0 to condition 1."}
+
+participantBy_averageRating_accCase <- experimentResult_original %>%
+  filter(experiment_id == "AccCase") %>%  
+  group_by(participant_id) %>%  
+  summarise(
+    avgRating_condition0 = mean(rating[condition == 0], na.rm = TRUE),
+    avgRating_condition1 = mean(rating[condition == 1], na.rm = TRUE),
+    diff_condition_0_1 = avgRating_condition0 - avgRating_condition1  
+  ) %>%
+  arrange(desc(diff_condition_0_1))
+
+# Install a package to use mixedsort().
+library(gtools)
+library(forcats)
+
+ggplot(
+  experimentResult_original %>%
+    filter(experiment_id == "AccCase") %>%
+    mutate(participant_id = fct_relevel(participant_id, mixedsort(unique(participant_id)))),
+  aes(x = factor(condition), y = rating)
+) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) + 
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +  
+  facet_wrap(~ participant_id, ncol = 8) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +  # Restrict x-axis to "0" and "1"
+  #scale_y_continuous(limits = c(0, 7), breaks = seq(0, 7, 1)) +  # Set y-axis from 0 to 7 with breaks
+  scale_y_continuous(limits = c(-0.1, 7.1)) +
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Trend Lines and Raw Data by Condition for Each Participant"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Ensure proper alignment for "0" and "1"
+  )
+```
+
+The figure presents trend lines and raw data for each participant (P1 to P102) across the two experimental conditions (0 and 1).
+Overall, the trend lines for most participants indicate a downward slope from condition 0 to condition 1, suggesting a decrease in the measured variable.
+However, there are a few exceptions.
+The trend line for participant P26 shows an upward slope, indicating an increase in the measured variable from condition 0 to condition 1.
+This participant's response pattern appears to deviate from the majority.
+Additionally, participant P45 seems to have provided ratings for only a few data points. 
+This suggests that P45 may not have completed the full experiment.
+In fact, there are likely more participants like P45, who did not complete the full experiment and thus are not included in the figure above.
+We will examine these participants as well in the next subsubsection.
+
+In the rest of this section, we will examine the difference between condition 0 and condition 1 sentences in more detail.
+To do so, Section \@ref(Data-preprocessing) outlines the steps taken to preprocess the experimental data, including the exclusion of unusual participants and other refinements, to ensure the dataset is suitable for subsequent statistical analysis.
+Section \@ref(Statistical-analysis) then conducts the statistical analysis of the main items.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Data Preprocessing: Unusual Participant Exclusion and Refinement {#Data-preprocessing}
+
+First, some participants did not complete the experiment, as shown below.
+
+```{r}
+# Identify participants who rated 32 or fewer sentences (total number of sentences was 33 sentences), and the number of ratings they provided.
+participants_incomplete <- experimentResult_original %>%
+  group_by(participant_id) %>%
+  summarise(ratings_count = n()) %>%
+  filter(ratings_count < 33)
+
+print(participants_incomplete)
+```
+
+The eight participants listed above did not complete the experiment, so they should be excluded from the dataframe and not considered in the subsequent analysis.
+Note that for this reason, most of these participants are not included in Figure \@ref(fig:0vs1ratingByParticipant).
+
+```{r}
+# Filter out participants with fewer than 33 ratings.
+experimentResult <- experimentResult_original %>%
+  group_by(participant_id) %>%
+  filter(n() == 33) %>%
+  ungroup()
+```
+
+In what follows, we identify and remove unusual participants based on the following criteria (all participants confirmed as a condition of participation that they: (i) lived in Japan from birth until at least age 13, and (ii) their parents spoke Japanese to them at home):
+
+- Their response times are not more than 2 standard deviations below the mean response time.
+- They provided ratings for at least 16 out of 19 selected filler and anchor items (i.e., around 85% of selected filler/anchors) that fall within 2 standard deviations of the mean for each item [e.g., @Huang2025nearly]
+- The standard deviations of their ratings fall between:  
+  (Quantile 1 - 1.5 × IQR) and (Quantile 3 + 1.5 × IQR) of all participants' rating standard deviations (IQR = interquartile range). 
+
+The current study focuses on contextual effects on the acceptability of accusative case marking. Therefore, it is crucial to verify that participants carefully read both contexts and dialogues.
+Their ratings of anchor and filler items demonstrate careful consideration (confirming both their attention and native speaker status, despite self-reports).
+The standard deviations of their ratings are also important as they show appropriate differentiation between items. 
+
+First, we examine whether any participants have response times more than 2 standard deviations below the mean.
+
+
+
+```{r}
+# Function to calculate total response time for each participant
+calculate_participant_response_times <- function(data) {
+  data %>%
+    group_by(participant_id) %>%
+    summarize(
+      total_response_time = as.numeric(
+        difftime(max(timestamp), min(timestamp), units = "mins")
+      )
+    )
+}
+
+# Detect participants with response times below 2 standard deviations
+identify_fast_outliers <- function(data) {
+  # Calculate response times for each participant
+  participant_times <- calculate_participant_response_times(data)
+  
+  # Calculate mean and standard deviation of response times
+  mean_time <- mean(participant_times$total_response_time)
+  sd_time <- sd(participant_times$total_response_time)
+  
+  # Identify participants below 2 standard deviations
+  fast_outliers <- participant_times %>%
+    filter(total_response_time < (mean_time - 2 * sd_time)) %>%
+    arrange(total_response_time)
+  
+  # Prepare a summary for reporting
+  summary_stats <- list(
+    mean_response_time = mean_time,
+    sd_response_time = sd_time,
+    lower_threshold = mean_time - 2 * sd_time,
+    fast_outliers = fast_outliers
+  )
+  
+  return(summary_stats)
+}
+
+# Example usage
+outlier_results <- identify_fast_outliers(experimentResult)
+
+# Print results
+cat("Mean Response Time:", round(outlier_results$mean_response_time, 2), "minutes\n")
+cat("Standard Deviation:", round(outlier_results$sd_response_time, 2), "minutes\n")
+cat("Lower Threshold:", round(outlier_results$lower_threshold, 2), "minutes\n\n")
+
+print(outlier_results$fast_outliers)
+```
+
+As shown above, no participants had response times more than 2 standard deviations below the mean.  
+However, we should examine the response times more carefully to identify any remaining outliers.
+To do this, we first create a violin plot to visualize the overall distribution of time spent by participants.
+
+
+```{r fig.cap="Distribution of total time spent by participants in completing the experiment."}
+
+# Load the package for ymd_hms().
+library(lubridate)
+
+# Calculates the total time each participant spent on the experiment. 
+timeSpent <- experimentResult %>%
+  group_by(participant_id) %>% 
+  summarise(
+    start_time = min(ymd_hms(timestamp)),  
+    end_time = max(ymd_hms(timestamp)), 
+    time_spent = difftime(max(ymd_hms(timestamp)), min(ymd_hms(timestamp)), units = "mins"), 
+    .groups = "drop"
+  ) %>%
+  arrange(time_spent)  
+
+ggplot(timeSpent, aes(x = "", y = time_spent)) +
+  geom_violin(fill = "skyblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(x = "", y = "Time Spent (minutes)")
+```
+
+The violin plot displays the time participants spent completing the experiment, specifically measuring the duration between answering the first and last items (32 items total, excluding the first anchor item).  
+Most participants completed the task in approximately 12 minutes, as shown in the plot.  
+While some participants took significantly longer (visible in the upper portion of the plot), our primary concern is identifying those who completed the experiment unusually quickly.
+These fast responders may not have carefully read the contexts or texts, whereas longer completion times don't necessarily indicate insincere participation.  
+
+To examine individual differences in completion times more closely, see the scatter plot below.
+
+```{r scatterPlot-timeSpent, fig.cap="Distribution of total experiment completion times, with each data point representing an individual participant."}
+ggplot(timeSpent, aes(x = participant_id, y = time_spent)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(x = "", y = "Time Spent (minutes)") +  
+  theme(axis.text.x = element_blank(),        
+        axis.ticks.x = element_blank())       
+```
+
+At first glance, the three participants who spent around three minutes on the experiment seem unusual.  
+To rate 32 items in that time, they would need to read a context, a dialogue, and provide a rating for each item within 5–6 seconds.  
+To determine whether these participants are indeed outliers, we compare them with others in the first quantile in terms of time spent on the experiment (i.e., the 25% of participants who completed the experiment in the shortest time).  
+To do this, we first calculate the first quantile (Q1) of the "Time Spent" in Figure \@ref(fig:scatterPlot-timeSpent).
+
+
+```{r}
+# Calculate the first quantile (Q1) of the time_spent column
+quantile1 <- quantile(timeSpent$time_spent, probs = 0.25)
+
+# Convert Q1 to a numeric value
+quantile1_numeric <- as.numeric(quantile1)
+
+print(quantile1_numeric)
+```
+
+Using the Q1 value as a reference, I created Figure \@ref(fig:cumulativeDistTime-Q1) to visualize cumulative response times.  
+The plot shows:
+
+- Time thresholds (in seconds) on the x-axis (ranging up to ~60 seconds)
+- Number of questions answered within each threshold on the y-axis (up to ~32 questions)  
+
+Each colored line represents an individual participant (e.g., P100), with 21 total participants shown in the Q1 group.
+
+```{r cumulativeDistTime-Q1, fig.width=12, fig.cap="Cumulative distribution of response times for participants in the first quantile of time spent on the experiment. Each line represents a different participant (n=21), showing the number of questions answered (y-axis) within each time threshold in seconds (x-axis)."}
+
+library(RColorBrewer)  # For better color palettes
+
+# Function to process a participant's data
+process_participant_data <- function(data, participant_id) {
+  # Calculate time differences
+  times <- data %>%
+    filter(participant_id == !!participant_id) %>%
+    arrange(timestamp) %>%
+    pull(timestamp) %>%
+    as.POSIXct()
+  
+  # Get total duration in minutes
+  total_duration <- as.numeric(difftime(max(times), min(times), units = "mins"))
+  
+  # Only process if duration is <= 9.3 minutes (Quantile 1 value)
+  if (total_duration <= 9.3) {
+    # Calculate time differences in seconds
+    time_diffs <- diff(as.numeric(times))
+    
+    # Create cumulative counts for each second threshold
+    max_diff <- ceiling(max(time_diffs))
+    breaks <- seq(1, max_diff)
+    counts <- sapply(breaks, function(x) sum(time_diffs <= x))
+    
+    # Return data frame
+    return(data.frame(
+      seconds = breaks,
+      count = counts,
+      participant = participant_id
+    ))
+  }
+  return(NULL)
+}
+
+# Process all participants
+all_participants_data <- lapply(
+  unique(experimentResult$participant_id),
+  function(pid) process_participant_data(experimentResult, pid)
+) %>%
+  bind_rows()
+
+# Create the plot with distinct colors
+ggplot(all_participants_data, aes(x = seconds, y = count, color = participant)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  scale_color_manual(
+    values = colorRampPalette(
+      c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", 
+        "#FFFF33", "#A65628", "#F781BF", "#999999", "#66C2A5",
+        "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F")
+    )(length(unique(all_participants_data$participant)))
+  ) +
+  labs(
+    title = "Cumulative Distribution of Response Times by Participant",
+    x = "Time Threshold (seconds)",
+    y = "Number of Questions Answered Within Threshold",
+    color = "Participant ID"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12),
+    legend.position = "right",
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12)
+  )
+
+```
+
+Most participants took between 10 and 30 seconds per question.  
+In contrast, participants P96 (yellow line), P24 (dark gray line), and P94 (light green line) were significantly faster, spending only 5–10 seconds per question.  
+Therefore, we will examine these participants in more detail.
+To assess whether their reading speeds are reasonable, we need to consider:  
+
+(i) the number of characters in each item,  
+(ii) the reading speed of fast Japanese readers, and  
+(iii) how quickly these participants read each item.  
+
+We will first investigate these factors for P96 and P94, who were assigned **List 1**, while P24 was assigned **List 2** (i.e., a different set of items), as shown below.  
+
+
+```{r}
+# Get experiment versions for multiple participants
+experiment_versions <- experimentResult %>%
+  filter(participant_id %in% c("P96", "P94", "P24")) %>%
+  group_by(participant_id) %>%
+  summarise(experiment_version = unique(experiment_version))
+
+print(experiment_versions)
+```
+
+The table below lists each item's word count, how quickly fast Japanese readers can read the texts in the item, and how quickly P96 and P94 read them.
+I will elaborate on this table below.
+
+
+```{r include=FALSE}
+install.packages("kableExtra")
+```
+
+```{r echo=FALSE, message=FALSE}
+# Load necessary library to to create and customize tables.
+library(knitr)
+library(kableExtra)
+library(bookdown)
+```
+
+```{r duration-table-P96P94, echo=FALSE}
+# Create the data frame
+table_data <- data.frame(
+  `List2 Items` = c("P01", "P02", "P03", "F01", "acc.bad.05", "F13", "acc.ok.10", "F06", "acc.bad.07", "F20.high",
+                    "F11", "F15", "F19.low", "F17.low", "F08", "acc.ok.04", "F07", "acc.bad.03", "F14", "acc.ok.02",
+                    "F12", "acc.bad.09", "F03", "F09", "acc.ok.08", "F02", "acc.bad.01", "F18.high", "F04", "acc.ok.06",
+                    "F05", "F16", "F10"),
+  `Context Characters` = c(19, 19, 114, 83, 22, 32, 275, 132, 150, 111,
+                                 147, 57, 156, 84, 148, 139, 82, 200, 93, 202,
+                                 134, 80, 170, 73, 102, 29, 97, 212, 121, 84,
+                                 50, 49, 35),
+  `Dialogue Characters` = c(27, 26, 100, 65, 63, 72, 19, 19, 43, 86,
+                                  21, 27, 14, 47, 99, 21, 63, 53, 23, 79,
+                                  30, 80, 85, 116, 54, 40, 58, 18, 25, 57,
+                                  61, 68, 100),
+  `Total Characters` = c(46, 45, 214, 148, 85, 104, 294, 151, 193, 197,
+                             168, 84, 170, 131, 247, 160, 145, 253, 116, 281,
+                             164, 160, 255, 189, 156, 69, 155, 230, 146, 141,
+                             111, 117, 135),
+  `Fast Reader's Time (s)` = c(2.00, 1.96, 9.30, 6.43, 3.70, 4.52, 12.78, 6.57, 8.39, 8.57,
+                                7.30, 3.65, 7.39, 5.70, 10.74, 6.96, 6.30, 11.00, 5.04, 12.17,
+                                7.13, 6.96, 11.09, 8.22, 6.78, 3.00, 6.74, 10.00, 6.35, 6.13,
+                                4.83, 5.09, 5.87),
+  `P96's Time - 1 (s)` = c("N/A", "**1.07**", "**3.04**", "**1.95**", "**1.67**", "4.58", "**6.61**", "**4.52**", "**5.53**", "**5.49**",
+                            "**4.73**", "**3.58**", "**3.88**", "**3.74**", "**6.34**", "**2.90**", "**4.12**", "**4.55**", "**2.85**", "**4.60**",
+                            "**3.00**", "**5.35**", "**6.45**", "**4.94**", "**3.93**", "**2.84**", "**2.83**", "**3.55**", "**3.55**", "**3.29**",
+                            "**2.73**", "**2.00**", "**2.50**"),
+  `P94's Time - 1 (s)` = c("N/A", "4.39", "**4.56**", "**3.69**", "4.88", "**4.08**", "**10.51**", "7.06", "**5.05**", "**7.63**",
+                            "**3.36**", "**6.09**", "**3.48**", "**3.43**", "**6.08**", "**2.25**", "**4.37**", "**5.64**", "**7.64**", "**5.69**",
+                            "**4.24**", "**10.01**", "**8.95**", "**4.24**", "**2.34**", "**3.48**", "**3.83**", "**2.78**", "**6.19**", "**5.68**",
+                            "7.55", "**4.23**", "6.69"),
+    check.names = FALSE
+)
+
+
+# Use knitr::kable to render the table
+kable(table_data, 
+      format = "markdown", 
+      align = c('l', 'c', 'c', 'c', 'c', 'c', 'c'),
+      caption = "Times Spent by P96 and P94")
+```
+
+The first four columns list the item IDs and the number of characters in the texts for each item.
+
+The fifth column, "Fast Reader's Time (s)", represents how many seconds it takes for fast Japanese readers to read the number of characters listed in the "Total Characters" column. 
+This value is calculated as follows:
+The value in the "Total Characters" column is divided by 23, and the result is rounded to the second decimal place.
+The reason for dividing by 23 is as follows:
+In Kobayashi and Kawashima's [-@Kobayashi.et.al2018Relationships] experiment, where participants were asked to read Japanese texts at a normal pace without skimming,[^2] the reading speed followed a unimodal distribution, ranging from approximately 300 to 1200 characters per minute, with a mean of 653 characters per minute, a median of 635 characters per minute, and a standard deviation of 174 characters per minute.[^3]
+Based on this finding, this paper assumes that participants P96, P94, and P24 can read 1400 characters per minute, or approximately 23 characters per second (≈ 1400/60). 
+This assumption accounts for the possibility that these participants might read faster than those in Kobayashi and Kawashima's [-@Kobayashi.et.al2018Relationships] experiment.
+This conservative assumption is made to avoid incorrectly concluding that these participants did not engage sincerely with the experiment and should be excluded from the statistical analysis.
+
+The last two columns show how many seconds participants P96 and P94 are considered to have spent reading the texts in each item, excluding the first anchor item.
+First, I list below how many seconds these participants spent on each item, excluding the first anchor item.[^4]
+
+
+[^2]: The following is a translation of the methodology of their experiment from the original Japanese text: Two hundred university students from the information science department participated as subjects in the experiment. The time it took for each subject to finish reading a stimulus text was measured. Participants were instructed to read at their usual pace but were told not to skim through the text. Additionally, after reading the stimulus text, they were given simple questions about its content. This was done to discourage skimming and to verify their comprehension. In this experiment, all participants answered all the questions correctly after reading.
+
+[^3]: @Saida2004Sokudoku also considers people who can read 1000 to 1200 characters per minute as fast readers. However, it should be noted that in his experiment, where participants were asked to read Japanese texts at their usual pace, the reading speed was almost normally distributed, ranging from approximately 300 to 1600 characters per minute, with a mean of 504.9 characters per minute and a standard deviation of 99.2 characters per minute.
+While reading 1600 characters per minute is significantly faster than reading 1200 characters per minute, it is unclear whether the relevant participant(s) read the texts without skimming or whether they understood the content well.
+
+[^4]: The first anchor item is excluded because its duration cannot be measured. The time spent on each item x is calculated by subtracting the end time of item x - 1 from the end time of item x. This is why the duration spent on the first anchor item cannot be measured.
+
+
+
+```{r }
+# Identify how long P96 spent for each item except the first anchor item 
+times_P96 <- experimentResult %>%
+  filter(participant_id == "P96") %>%
+  arrange(timestamp) %>%
+  pull(timestamp) %>%
+  as.POSIXct()
+
+time_diffs_P96 <- diff(as.numeric(times_P96))
+print(time_diffs_P96) 
+
+```
+
+
+```{r }
+times_P94 <- experimentResult %>%
+  filter(participant_id == "P94") %>%
+  arrange(timestamp) %>%
+  pull(timestamp) %>%
+  as.POSIXct()
+
+time_diffs_P94 <- diff(as.numeric(times_P94))
+print(time_diffs_P94) 
+
+```
+
+If you compare these values with the values in the table in \@ref(tab:duration-table-P96P94), you will notice that the latter is smaller than the former by 1.
+This is because even if I did not read the context or dialogues at all, it takes 1–2 seconds (and sometimes 3 seconds) just to select the rating and click the "next" button to move to the next question.
+In other words, conservatively assuming that it takes 1 second for these computer operations, I deducted 1 second from the time P96 and P94 spent on each item to estimate how many seconds they spent reading the texts in each item, excluding the first anchor item.
+
+Based on this, observe the table in \@ref(tab:duration-table-P96P94) again.
+The values in the columns "P96’s Time - 1 (s)" and "P94’s Time - 1 (s)" are highlighted if they are smaller than the value in "Fast Reader’s Time (s)" on the same row—that is, if those participants are considered to have read the texts too quickly.
+As you can see, 31 out of 32 items are highlighted for P96, and 27 out of 32 items are highlighted for P94.
+This suggests that these participants did not read the texts for most items carefully.
+
+Next, we examine how quickly P24 read the texts, following the same approach as we did for P96 and P94 above.
+First, the following lists how many seconds P24 spent on each item, excluding the first anchor item.
+
+
+```{r }
+times_P24 <- experimentResult %>%
+  filter(participant_id == "P24") %>%
+  arrange(timestamp) %>%
+  pull(timestamp) %>%
+  as.POSIXct()
+
+time_diffs_P24 <- diff(as.numeric(times_P24))
+print(time_diffs_P24) 
+```
+
+Based on this, I created the table in \@ref(tab:duration-table-P24) below. 
+As you can see, 21 out of 32 items are highlighted, meaning that those items were read too quickly.
+Therefore, P24 did not carefully read the texts for more than half of the items.
+
+
+```{r duration-table-P24, echo=FALSE}
+# Create the data frame
+table_data2 <- data.frame(
+  `List1 Items` = c("P01", "P02", "P03", "F18.low", "F12", "F11", "F05", "F20.low", 
+                    "F04", "acc.ok.05", "F07", "F02", "F06", "acc.bad.02", "F10", "acc.ok.01", 
+                    "F13", "acc.bad.10", "F03", "F16", "acc.ok.03", "F09", "acc.bad.04", "F01", 
+                    "F17.high", "acc.ok.07", "F15", "acc.bad.08", "F19.high", "acc.ok.09", 
+                    "F08", "F14", "acc.bad.06"),
+  `Context Characters` = c(19, 19, 114, 212, 134, 147, 50, 111, 121, 121, 82, 29, 132, 
+                                171, 35, 229, 32, 223, 170, 49, 61, 73, 182, 83, 84, 106, 57, 
+                                53, 156, 127, 148, 93, 158),
+  `Dialogue Characters` = c(27, 26, 100, 19, 30, 21, 61, 40, 25, 89, 63, 40, 19, 49, 
+                                 100, 57, 72, 22, 85, 68, 56, 116, 18, 65, 47, 67, 27, 107, 
+                                 12, 156, 99, 23, 69),
+  `Total Characters` = c(46, 45, 214, 231, 164, 168, 111, 151, 146, 210, 145, 69, 151, 
+                            220, 135, 286, 104, 245, 255, 117, 117, 189, 200, 148, 131, 173, 
+                            84, 160, 168, 283, 247, 116, 227),
+  `Fast Reader’s Time (s)` = c(2.00, 1.96, 9.30, 10.04, 7.13, 7.30, 4.83, 6.57, 6.35, 9.13, 
+                               6.30, 3.00, 6.57, 9.57, 5.87, 12.43, 4.52, 10.65, 11.09, 5.09, 
+                               5.09, 8.22, 8.70, 6.43, 5.70, 7.52, 3.65, 6.96, 7.30, 12.30, 
+                               10.74, 5.04, 9.87),
+  `P24's Time - 1 (s)` = c("N/A", 4.03, 11.14, "**7.88**", "**6.28**", "**4.89**", 6.65, 
+                           "**5.69**", "**4.67**", "**4.18**", 8.76, 4.22, 7.68, "**6.37**", 
+                           12.59, "**3.49**", 5.39, "**4.55**", "**7.32**", 5.17, "**2.74**", 
+                           "**4.27**", "**2.26**", 6.93, "**3.59**", "**4.98**", 4.28, 
+                           "**3.53**", "**2.50**", "**9.20**", "**6.54**", "**3.78**", 
+                           "**3.76**"),
+  check.names = FALSE
+)
+
+# Use knitr::kable to render the table
+kable(table_data2, 
+      format = "markdown", 
+      align = c('l', 'c', 'c', 'c', 'c', 'c'),
+      caption = "Time Spent by P24")
+
+#kable(table_data2, 
+ #     format = "markdown", 
+  #    align = c('l', 'c', 'c', 'c', 'c', 'c'),
+   #   caption = "Time Spent by P24") %>%  # Change back to caption instead of tab.cap
+    #  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) #<-- if i include this, the caption says something like "Table 4.1: Table 4.2: Time Spent by P24". 
+#kable(table_data2, format = "markdown", 
+ #     align = c('l', 'c', 'c', 'c', 'c', 'c'),
+  #    tab.cap = "Time Spent by P24") %>%  # Changed caption to tab.cap
+   #   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+#kable(table_data2, format = "markdown", align = c('l', 'c', 'c', 'c', 'c', 'c')) %>%
+ # kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+#kable(table_data2, format = "markdown", align = c('l', 'c', 'c', 'c', 'c', 'c'), 
+#      caption = "Time Spent by P24") %>%
+ # kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+In summary, participants P96, P94, and P24 should be excluded from the statistical analysis in the next subsection, as they likely did not read the texts carefully.  
+
+```{r}
+experimentResult <- experimentResult %>%
+filter(!(participant_id %in% c("P24", "P94", "P96")))
+```
+
+Next, we identify any participants who provided ratings outside 2 standard deviations of the mean for more than 3 of the 19 selected anchor/filler items (i.e., around 15% of items), following the criteria established by @Huang2025nearly.
+
+
+```{r}
+# Step 1: Calculate mean and SD for each anchor and filler item separately
+item_stats <- experimentResult %>%
+  filter(
+    (experiment_id == "Practice" & item_id %in% 1:3) |  # Anchors
+    (experiment_id == "Filler" & item_id %in% 1:16)     # Fillers
+  ) %>%
+  group_by(experiment_id, item_id) %>%
+  summarise(
+    item_mean = mean(rating, na.rm = TRUE),
+    item_sd = sd(rating, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Step 2: Identify ratings outside 2 SDs for both anchors and fillers
+ratings_with_flags <- experimentResult %>%
+  # Join with the item statistics
+  left_join(item_stats, by = c("experiment_id", "item_id")) %>%
+  # Flag ratings outside 2 SDs for both anchors and fillers
+  mutate(
+    unusual = ifelse(
+      ((experiment_id == "Practice" & item_id %in% 1:3) |  # For anchors
+       (experiment_id == "Filler" & item_id %in% 1:16)) &  # For fillers
+      !is.na(item_mean) &  # Ensure we have stats for this item
+      (rating < (item_mean - 2*item_sd) | rating > (item_mean + 2*item_sd)),
+      1,  # Mark as unusual
+      0   # Mark as normal
+    )
+  )
+
+# Step 3: Count unusual ratings per participant
+unusual_counts <- ratings_with_flags %>%
+  group_by(participant_id) %>%
+  summarise(
+    unusual_total = sum(unusual, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Step 4: Identify participants with >3 unusual ratings
+participants_to_exclude <- unusual_counts %>%
+  filter(unusual_total > 3) %>%
+  arrange(participant_id)
+
+# View the distribution of unusual ratings
+hist(unusual_counts$unusual_total, 
+     main = "Distribution of Unusual Ratings per Participant",
+     xlab = "Number of Unusual Ratings",
+     ylab = "Number of Participants",
+     col = "lightblue",
+     breaks = seq(-0.5, max(unusual_counts$unusual_total) + 0.5, by = 1),
+     right = FALSE)
+
+# Print results
+print(participants_to_exclude, n = Inf)
+```
+
+
+```{r include=FALSE}
+# Step 1: Calculate mean and SD for each filler item (1-16)
+filler_stats <- experimentResult %>%
+  filter(experiment_id == "Filler" & item_id %in% 1:16) %>%
+  group_by(item_id) %>%
+  summarise(
+    filler_mean = mean(rating, na.rm = TRUE),
+    filler_sd = sd(rating, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Step 2: Flag ratings outside 2 SDs for fillers only
+ratings_with_flags <- experimentResult %>%
+  # Join with the filler statistics
+  left_join(filler_stats, by = "item_id") %>%
+  # Flag ratings outside 2 SDs for fillers
+  mutate(
+    unusual = ifelse(
+      experiment_id == "Filler" &        # Only for fillers
+      item_id %in% 1:16 &               # Only items 1-16
+      !is.na(filler_mean) &             # Ensure we have stats
+      (rating < (filler_mean - 2*filler_sd) | 
+       rating > (filler_mean + 2*filler_sd)),
+      1,  # Mark as unusual
+      0   # Mark as normal
+    )
+  )
+
+# Step 3: Count unusual filler ratings per participant
+unusual_counts <- ratings_with_flags %>%
+  group_by(participant_id) %>%
+  summarise(
+    unusual_total = sum(unusual, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Step 4: Identify participants with >10 unusual filler ratings
+participants_to_exclude <- unusual_counts %>%
+  filter(unusual_total > 3) %>%
+  arrange(participant_id)
+
+# View the distribution of unusual ratings
+hist(unusual_counts$unusual_total, 
+     main = "Distribution of Unusual Ratings per Participant",
+     xlab = "Number of Unusual Ratings",
+     ylab = "Number of Participants",
+     col = "lightblue",
+     breaks = seq(-0.5, max(unusual_counts$unusual_total) + 0.5, by = 1),
+     right = FALSE)
+
+# Print results
+print(participants_to_exclude, n = Inf)
+```
+
+```{r include=FALSE}
+# Step 1: Calculate mean and SD for filler items
+item_stats <- experimentResult %>% 
+  filter(experiment_id == "Filler" & item_id %in% 1:16) %>% 
+  group_by(experiment_id, item_id) %>% 
+  summarise(
+    item_mean = mean(rating, na.rm = TRUE), 
+    item_sd = sd(rating, na.rm = TRUE), 
+    .groups = "drop"
+  )
+
+# Step 2: Identify ratings outside 2 SDs for fillers
+ratings_with_flags <- experimentResult %>% 
+  # Join with the item statistics
+  left_join(item_stats, by = c("experiment_id", "item_id")) %>% 
+  # Flag ratings outside 2 SDs for fillers
+  mutate(
+    unusual = ifelse(
+      experiment_id == "Filler" & item_id %in% 1:16 & 
+      !is.na(item_mean) & 
+      (rating < (item_mean - 2*item_sd) | rating > (item_mean + 2*item_sd)), 
+      1,  # Mark as unusual
+      0   # Mark as normal
+    )
+  )
+
+# Step 3: Count unusual ratings per participant
+unusual_counts <- ratings_with_flags %>% 
+  group_by(participant_id) %>% 
+  summarise(
+    unusual_total = sum(unusual, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Step 4: Identify participants with >10 unusual ratings
+participants_to_exclude <- unusual_counts %>% 
+  filter(unusual_total > 3) %>% 
+  arrange(participant_id)
+
+# View the distribution of unusual ratings
+hist(unusual_counts$unusual_total, 
+     main = "Distribution of Unusual Ratings per Participant", 
+     xlab = "Number of Unusual Ratings", 
+     ylab = "Number of Participants")
+
+# Print results
+print(participants_to_exclude, n = Inf)
+```
+
+The results show that participants P4, P13, P14, P26, P28, P88, and P93 each provided four ratings that fell outside 2 standard deviations from the mean.  
+To assess how unusual these participants' anchor/filler ratings are, we will compare their individual ratings against the average ratings.  
+
+First, Figures \@ref(fig:anchor-plot) displays the average ratings for anchors with error bars showing 95% confidence intervals.
+
+
+```{r anchor-plot, fig.cap="Average ratings for 3 anchor items with 95% confidence intervals. The y-axis shows the average rating scale ranging from 1 to 7. Item 1 received the highest rating (approximately 6), followed by item 3 (approximately 4), while item 2 received the lowest rating (approximately 2.5)."}
+
+# Define constants
+selected_items <- as.character(1:3) 
+
+# Practice items
+practice_summary <- experimentResult %>%
+  filter(experiment_id == "Practice", 
+         item_id %in% selected_items) %>%
+  group_by(item_id) %>%
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE),
+    ci_95 = 1.96 * sd(rating, na.rm = TRUE) / sqrt(n())
+  ) %>%
+  arrange(item_id)
+
+# Plot for Practice items
+ggplot(practice_summary, aes(x = item_id, y = average_rating)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = average_rating - ci_95, 
+                    ymax = average_rating + ci_95),
+                width = 0.2) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  ) +
+  scale_x_continuous(breaks = 1:3) +  # Set specific breaks for x-axis
+  labs(title = "Average Ratings for Anchors with 95% Confidence Intervals",
+       x = "Item ID",
+       y = "Average Rating")
+```
+
+In Figure \@ref(fig:anchor-plot), item 1 received the highest rating (approximately 6), item 3 had an intermediate rating (approximately 4), and item 2 had the lowest rating (approximately 2.5).
+
+With Figure \@ref(fig:anchor-plot) as reference, examine Figure \@ref(fig:anchorPlot-outlier), which contrasts the average scores with ratings from the unusual participants identified earlier.
+
+```{r anchorPlot-outlier, warning=FALSE, fig.width=15, fig.height=15, fig.cap="Comparison of individual participant ratings (colored lines) versus average ratings (black line) for practice/anchor items. The average pattern shows a characteristic dip for anchor sentence 2, while some of the selected participants P4, P13, P14, P26, P28, P88, and P93 display notable deviations from this pattern."}
+
+# Define constants
+unusualParticipants <- c("P4", "P13", "P14", "P26", "P28", "P88", "P93")  # Added P88 and P93
+selected_items <- as.character(1:3)  
+
+# Function to create comparison dataset for a single participant
+create_comparison_data <- function(participant_id, experiment_result) {
+  bind_rows(
+    experiment_result %>%
+      filter(participant_id == !!participant_id, 
+             experiment_id == "Practice",
+             item_id %in% selected_items) %>%
+      mutate(comparison = paste("Average vs", participant_id)),
+    experiment_result %>%
+      filter(experiment_id == "Practice", 
+             item_id %in% selected_items) %>%
+      group_by(item_id) %>%
+      summarise(rating = mean(rating, na.rm = TRUE)) %>%
+      mutate(participant_id = "Average",
+             comparison = paste("Average vs", !!participant_id))
+  )
+}
+
+# Create datasets for all participants
+all_plot_data <- bind_rows(
+  map(unusualParticipants, ~create_comparison_data(.x, experimentResult))
+)
+
+# Reorder the facets by specifying the order of comparisons
+all_plot_data <- all_plot_data %>%
+  mutate(comparison = factor(comparison, 
+                           levels = c("Average vs P4",
+                                    "Average vs P13",
+                                    "Average vs P14",
+                                    "Average vs P26",
+                                    "Average vs P28",
+                                    "Average vs P88",
+                                    "Average vs P93")))
+
+# Create the faceted plot with additional colors for P88 and P93
+ggplot(all_plot_data, aes(x = item_id, y = rating, group = participant_id, color = participant_id)) + 
+  geom_point(size = 3) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~comparison, ncol = 2) +
+  scale_color_manual(values = c("Average" = "black",
+                               "P4" = "#4DAF4A",      # Green
+                               "P13" = "#FF8C00",     # Dark Orange
+                               "P14" = "#E41A1C",     # Red
+                               "P26" = "#984EA3",     # Purple
+                               "P28" = "#377EB8",     # Blue
+                               "P88" = "#A65628",     # Brown
+                               "P93" = "#F781BF"      # Pink
+                               )) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14, face = "bold"),
+    panel.spacing = unit(3, "lines"),
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = element_text(size = 12),
+    plot.margin = margin(1, 1, 1, 1),
+    panel.grid.minor = element_blank(),
+    legend.margin = margin(t = 1)
+  ) +
+  labs(title = "Ratings of Practice Items: Individual Participants vs Average",
+       x = "Anchor Sentence ID",
+       y = "Rating",
+       color = "Participant ID") +
+  guides(color = guide_legend(order = 1, nrow = 2))
+```
+
+Figure \@ref(fig:anchorPlot-outlier) shows how seven participants (P4, P13, P14, P26, P28, P88, and P93) rated three anchor sentences compared to the average (black line). 
+While the average ratings follow a V-pattern with a pronounced dip at anchor sentence 2, some of the selected participants show notable deviations: 
+
+- P4 and P26 shows an inverted pattern with higher ratings for item 2.
+- P13 and P28 maintain consistently high ratings across all items.
+
+Figure \@ref(fig:anchorPlot-outlier) also reveals that P88 did not provide a rating for the second anchor item.
+We therefore examine P88's responses in detail below.
+
+
+
+```{r}
+experimentResult %>%
+  filter(participant_id %in% c("P88")) %>%
+  select(participant_id, experiment_id, item_id, condition, rating) %>%
+  arrange(participant_id, experiment_id)%>%
+  print(n=Inf)
+```
+
+The table above confirms that P88 did not rate the second anchor item and instead rated the first anchor item twice.
+Since this is an unexpected pattern, we examine below whether other participants showed similar behavior.
+
+
+```{r}
+# Identify participants with duplicate ratings for practice items
+problematic_participants <- experimentResult %>%
+  filter(experiment_id == "Practice") %>%  # Focus on practice/anchor items
+  group_by(participant_id, item_id) %>%    # Group by participant and item
+  filter(n() > 1) %>%                      # Find items rated more than once
+  distinct(participant_id) %>%             # Get unique participant IDs
+  pull(participant_id)                     # Extract as vector
+
+# View all practice ratings for these participants
+experimentResult %>%
+  filter(participant_id %in% problematic_participants, 
+         experiment_id == "Practice") %>%
+  select(participant_id, experiment_id, item_id, rating) %>%
+  arrange(participant_id, item_id) %>%
+  print(n = Inf)
+```
+
+The analysis identified two additional participants (P81 and P99) with duplicate practice item ratings, mirroring the issue previously observed with P88. 
+Specifically:
+
+- P81 submitted identical ratings (rating = 1) for item 2 twice while rating item 1 once.
+- P99 duplicated their rating (rating = 6) for item 1 but rated item 3 correctly once.
+
+These errors are likely attributable to technical limitations of the Heroku data collection platform rather than experimental design flaws, as evidenced by three key observations. 
+
+- Low prevalence (only 3/84 participants affected)
+- Random distribution across participants assigned to different item sets
+- No systematic pattern in which items were duplicated
+
+
+Next, we turn to Figure \@ref(fig:filler-plot), which displays the average ratings for selected fillers, with error bars showing 95% confidence intervals.
+
+
+```{r filler-plot, fig.cap="Average ratings for 16 different filler items, with each item identified by a numeric ID (1-16) on the x-axis. The y-axis shows the average rating scale ranging from 1 to 7. Each item is represented by a point indicating its mean rating, with vertical error bars showing the 95% confidence intervals."}
+
+# Define constants
+selected_items <- as.character(1:16)  
+
+# Filler items
+filler_summary <- experimentResult %>%
+  filter(experiment_id == "Filler", 
+         item_id %in% selected_items) %>%
+  group_by(item_id) %>%
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE),
+    ci_95 = 1.96 * sd(rating, na.rm = TRUE) / sqrt(n())
+  ) %>%
+  arrange(item_id)
+
+# Plot for Filler items
+ggplot(filler_summary, aes(x = item_id, y = average_rating)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = average_rating - ci_95, 
+                    ymax = average_rating + ci_95),
+                width = 0.2) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  ) +
+  scale_x_continuous(breaks = 1:16) +  # Set specific breaks for x-axis
+  labs(title = "Average Ratings for Fillers with 95% Confidence Intervals",
+       x = "Item ID",
+       y = "Average Rating")
+
+```
+
+In Figure \@ref(fig:filler-plot), the items display considerable variation in ratings: 
+items 15 and 16 received the highest ratings (around 6.5-6.2), and items 9-14 received intermediate ratings (approximately 4-5), while items 1-8 received lower ratings (approximately 1.5-3). 
+
+
+With Figure \@ref(fig:filler-plot) as reference, examine Figure \@ref(fig:fillerPlot-outlier), which contrasts the average scores of filler items with ratings from the unusual participants identified earlier.
+
+
+```{r fillerPlot-outlier, fig.width=15, fig.height=15, fig.cap="Ratings of selected filler items comparing individual participants (colored lines) with average ratings (black line) across 16 items. Each panel shows a different participant's rating pattern (P4, P13, P14, P26, P28, P88, and P93) versus the average, revealing varying degrees of consistency with the group norm."}
+
+unusualParticipants <- c("P4", "P13", "P14", "P26", "P28", "P88", "P93")
+selected_items <- as.character(1:16)
+
+create_comparison_data <- function(participant_id, experiment_result) {
+  bind_rows(
+    experiment_result %>%
+      filter(participant_id == !!participant_id, 
+             experiment_id == "Filler",
+             item_id %in% selected_items) %>%
+      mutate(comparison = paste("Average vs", participant_id)),
+    experiment_result %>%
+      filter(experiment_id == "Filler", 
+             item_id %in% selected_items) %>%
+      group_by(item_id) %>%
+      summarise(rating = mean(rating, na.rm = TRUE)) %>%
+      mutate(participant_id = "Average",
+             comparison = paste("Average vs", !!participant_id))
+  )
+}
+
+all_plot_data <- bind_rows(
+  map(unusualParticipants, ~create_comparison_data(.x, experimentResult))
+)
+
+all_plot_data <- all_plot_data %>%
+  mutate(comparison = factor(comparison, 
+                           levels = c("Average vs P4",
+                                    "Average vs P13",
+                                    "Average vs P14",
+                                    "Average vs P26",
+                                    "Average vs P28",
+                                    "Average vs P88",
+                                    "Average vs P93")))
+
+ggplot(all_plot_data, aes(x = item_id, y = rating, group = participant_id, color = participant_id)) + 
+  geom_point(size = 3) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~comparison, ncol = 2) +
+  scale_color_manual(values = c("Average" = "black",
+                               "P4" = "#4DAF4A",
+                               "P13" = "#FF8C00",
+                               "P14" = "#E41A1C",
+                               "P26" = "#984EA3",
+                               "P28" = "#377EB8",
+                               "P88" = "#A65628",
+                               "P93" = "#F781BF")) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14, face = "bold"),
+    panel.spacing = unit(3, "lines"),
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = element_text(size = 12),
+    plot.margin = margin(1, 1, 1, 1),  # Added more margin around the entire plot
+    panel.grid.minor = element_blank(),  # Removed minor grid lines for cleaner look
+    legend.margin = margin(t = 1)  # Added space above the legend
+  ) +
+  labs(title = "Ratings of Selected Filler Items: Individual Participants vs Average",
+       x = "Item ID",
+       y = "Rating",
+       color = "Participant ID") +
+  guides(color = guide_legend(order = 1, nrow = 2))  # Legend in two rows for better space usage
+```
+
+In Figure \@ref(fig:fillerPlot-outlier), the panels reveal distinct individual rating patterns: 
+
+- P4 consistently rates items higher than average.
+- P13, P14, P88, and P93 generally rate items higher with occasional exceptions. 
+- P26 demonstrates variable alignment with average ratings. 
+- P28 generally rates items lower with occasional exceptions.
+
+
+As shown in Figures \@ref(fig:anchor-plot) through \@ref(fig:fillerPlot-outlier), participants P4, P13, P14, P26, P28, P88, and P93 provided ratings for anchors and fillers that significantly deviated from the average.
+We therefore exclude these participants from subsequent statistical analyses.
+
+
+
+
+
+
+
+Finally, we examine each participant's rating standard deviation, which measure how consistently or variably they used the rating scale.  
+Participants with unusually low rating standard deviation values are flagged for review, as this may indicate they failed to meaningfully differentiate between items.  
+
+First, consider the boxplot of rating standard deviations shown below.
+
+```{r ratingSD, fig.cap="Boxplot showing the distribution of standard deviations in participant ratings. The median standard deviation is approximately 2.3 (horizontal line), with most participants showing standard deviations between 2.1-2.5 (box edges representing the interquartile range). Several outliers with notably low variability (standard deviations below 1.5) are visible at the bottom of the plot."}
+
+#Calculate the standard deviation of ratings for each participant and sort the results in ascending order. 
+responseVariability <- experimentResult %>%
+  group_by(participant_id) %>%
+  summarise(
+    rating_sd = sd(rating, na.rm = TRUE),
+    .groups = "drop"
+  )%>%
+arrange(rating_sd)
+
+ggplot(responseVariability, aes(y = rating_sd)) +
+  geom_boxplot(width = 0.5, outlier.shape = NA) +  
+  geom_point(aes(x = 0), position = position_dodge(width = 0.3)) +  
+  theme_minimal() +
+  labs(title = "Distribution of Rating Standard Deviations",
+       y = "Standard Deviation of Ratings") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.x = element_blank())
+```
+
+The distribution of rating standard deviations is centered around 2.2–2.3, indicating that participants generally differentiated their ratings to a reasonable extent.
+However, one notably low standard deviation, around 1.0, falls well below the typical range.
+The relatively narrow interquartile range in the boxplot highlights how substantially this low value deviates from the normal response variability observed among other participants.  
+
+This participant stands out as a potential concern, as their unusually low rating variability suggests they may not have been making meaningful distinctions between items.
+This case should be flagged for further review to assess the quality and validity of their responses.  
+
+To identify participants whose standard deviation values deviate significantly from others, I set the lower bound as Quantile 1 - 1.5 * interquartile range and the upper bound as Quantile 3 + 1.5 * interquartile range.
+I will further examine participants whose standard deviation values fall below the lower bound or above the upper bound.  
+
+
+
+```{r}
+# Calculate quantiles and bounds
+q1 <- quantile(responseVariability$rating_sd, 0.25)
+q3 <- quantile(responseVariability$rating_sd, 0.75)
+iqr <- q3 - q1
+lower_bound <- q1 - 1.5 * iqr
+upper_bound <- q3 + 1.5 * iqr
+
+# Identify "outliers".
+outliers <- responseVariability %>%
+  mutate(is_outlier = rating_sd < lower_bound | rating_sd > upper_bound) %>%
+  filter(is_outlier)
+
+# Print outlier information
+if(nrow(outliers) > 0) {
+  print("Potential outliers found:")
+  for(i in 1:nrow(outliers)) {
+    print(paste("Participant", outliers$participant_id[i], 
+                "with SD =", round(outliers$rating_sd[i], 3),
+                ifelse(outliers$rating_sd[i] < lower_bound, 
+                       "(below lower bound)", "(above upper bound)")))
+  }
+} else {
+  print("\nNo outliers found")
+}
+```
+
+The analysis above shows that participant P4's rating standard deviation is 0.966, which is significantly lower than that of other participants.  
+Notably, P4 was also flagged based on their ratings of anchors and fillers.
+Thus, this additional measure further supports that P4's ratings are unusual compared to those of other participants.  
+
+Based on both the ratings of anchors and fillers and the rating standard deviation, I exclude participants P4, P13, P14, P26, P28, P88, and P93.  
+This results in the exclusion of 10 participants in total—P4, P13, P14, P26, P28, P88, and P93, as well as P24, P94, and P96, who were previously excluded based on their response times.  
+
+
+```{r}
+experimentResult <- experimentResult %>%
+filter(!(participant_id %in% c("P4", "P13", "P14", "P26", "P28", "P88", "P93")))
+```
+
+Using the filtered **experimentResult** dataframe (with 10 participants excluded), we analyze the differences between condition 0 and condition 1 sentences through multiple comparisons:
+
+- Overall comparison across the dataset
+- Item-by-item analysis
+- Participant-level patterns
+- Monolingual vs. bilingual participants
+- Eastern vs. Western Japanese dialects
+- Potential order effects
+
+We begin by examining the overall rating differences between conditions 0 and 1.
+
+```{r fig.cap="Ratings across conditions for AccCase items. The scatterplot shows higher ratings clustered around 5-6 for condition 0 (pink) and lower ratings concentrated around 1-2 for condition 1 (teal), with a clear downward trend shown by the regression line."}
+ggplot(experimentResult %>% filter(experiment_id == "AccCase"), aes(x = factor(condition), y = rating)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Ratings Across Conditions for AccCase Items"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  )
+```
+
+The scatter plot reveals a clear downward trend in ratings from condition 0 to condition 1 for AccCase items. 
+In condition 0, ratings are predominantly clustered at higher values (around 5–6), while in condition 1, ratings are concentrated at lower values (around 1–2). 
+The blue trend line visually illustrates this significant decline in ratings between the two conditions, suggesting a consistent and substantial decrease in participant responses across AccCase items.
+
+The exact rating values for condition 0 and condition 1 sentences, along with their standard deviations, are provided below.
+
+
+```{r}
+# Calculate summary statistics
+summary_stats <- experimentResult %>% 
+  filter(experiment_id == "AccCase") %>% 
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE), 
+    standard_deviation = sd(rating, na.rm = TRUE)
+  )
+
+print(summary_stats)
+
+```
+
+The table provides numerical support for the visual trend.
+The average rating for condition 0 is 5.66, with a standard deviation of 1.63, indicating that ratings for condition 0 were high with moderate variability.
+In contrast, condition 1 shows a much lower average rating of 2.08, with a standard deviation of 1.44.
+This confirms the graphical representation, quantitatively demonstrating a marked difference in ratings between condition 0 and condition 1, with the spread of ratings remaining relatively consistent across both conditions.
+Note that the difference in rating between condition 0 and condition 1 is 3.58, which is relatively similar to the difference between the very natural and very unnatural anchor sentences (i.e., 6.13 - 2.21 = 3.92): 
+
+```{r}
+averageRatings_practice2 <- experimentResult %>%
+  filter(experiment_id == "Practice") %>% 
+  group_by(item_id) %>%
+  summarise(average_rating = mean(rating, na.rm = TRUE), .groups = "drop")
+
+# Print the result of the calculation. 
+print(averageRatings_practice2, n = Inf)
+```
+
+Next, we turn to the difference between condition 0 and condition 1 for each AccCase item to examine variations among items due to the use of particular lexical items.
+
+
+
+```{r fig.cap="Individual item ratings by condition across 10 items. Each panel displays raw data points and trend lines comparing condition 0 (pink, higher ratings) to condition 1 (teal, lower ratings), with consistent downward trends across all items."}
+
+custom_labeller <- function(labels) {
+  labels$item_id <- paste0("item ", labels$item_id)
+  labels
+}
+
+ggplot(experimentResult %>% filter(experiment_id == "AccCase"), aes(x = factor(condition), y = rating)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +  
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +  # Trend line with confidence intervals
+  facet_wrap(~ item_id, labeller = custom_labeller) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +  
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Trend Lines and Raw Data by Condition for Each Item"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  
+  )
+
+```
+
+The figure displays trend lines and raw data points for 10 different items across two conditions.
+Each item shows a consistent downward trend from condition 0 to condition 1, with ratings typically high (around 5–6) in condition 0 and lower (around 1–2) in condition 1.
+The teal trend lines uniformly indicate a decline in ratings, suggesting a systematic difference in participant responses across all items.
+
+The exact rating values for condition 0 and condition 1 sentences for each AccCase item are provided below.
+
+
+```{r}
+itemBy_averageRating_accCase <- experimentResult %>%
+  filter(experiment_id == "AccCase") %>%  
+  group_by(item_id) %>% 
+  summarise(
+    avgRating_condition0 = mean(rating[condition == 0], na.rm = TRUE),
+    avgRating_condition1 = mean(rating[condition == 1], na.rm = TRUE),
+    diff_condition_0_1 = avgRating_condition0 - avgRating_condition1  # Calculate the difference
+  ) 
+
+print(itemBy_averageRating_accCase, n = Inf)
+```
+
+The table provides detailed numerical insights for each item.
+The average ratings in condition 0 range from 4.80 to 6.51, while the ratings in condition 1 range from 1.37 to 3.24.
+The "diff_condition_0_1" column shows the difference between conditions, with values between 2.73 and 4.08, consistently indicating a substantial difference in ratings between condition 0 and condition 1 across all items.
+
+Lastly, we turn to the difference between condition 0 and condition 1 for each participant to examine variations among participants.
+
+
+```{r fig.width=15, fig.height=15, fig.cap="Individual participant ratings by condition. Each panel represents one participant's ratings with trend lines comparing condition 0 (pink points) to condition 1 (teal points). All 84 participants show consistent downward trends between conditions with confidence intervals (gray shading)."}
+
+ggplot(
+  experimentResult %>%
+    filter(experiment_id == "AccCase") %>%
+    mutate(participant_id = fct_relevel(participant_id, mixedsort(unique(participant_id)))),
+  aes(x = factor(condition), y = rating)
+) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) + 
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +  
+  facet_wrap(~ participant_id, ncol = 8) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) + 
+  #scale_y_continuous(limits = c(0, 7), breaks = seq(0, 7, 1)) +  
+  scale_y_continuous(limits = c(-0.1, 7.1)) +
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Trend Lines and Raw Data by Condition for Each Participant"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Ensure proper alignment for "0" and "1"
+  )
+```
+
+
+The figure displays trend lines and raw data points for 84 different participants across two conditions.
+Every participant shows a consistent downward trend from condition 0 to condition 1, with ratings typically higher (around 5–6) in condition 0 and lower (around 1–2) in condition 1.
+The blue trend lines uniformly indicate a decline in ratings, suggesting a systematic difference in participant responses across all participants.
+Among these 84 participants, P47, P76, P92, and P91 reported having studied linguistics before. The first three of these participants show substantial differences between condition 0 and condition 1, while P91 shows a smaller difference with more variation in ratings across items.
+One difference I observe regarding their linguistics background is that P47, P76, and P92 seem to have studied a wide range of linguistics subfields, including syntax, while P91 reports studying only phonetics.
+Therefore, it is possible that participants who have studied syntax, semantics, and/or morphology are more likely to observe the difference between condition 0 and condition 1.
+However, I leave this hypothesis for future research, as the current study does not involve many participants with a linguistics background.
+
+The exact rating values for condition 0 and condition 1 sentences from each participant are provided below.
+
+
+```{r}
+participantBy_averageRating_accCase <- experimentResult %>%
+  filter(experiment_id == "AccCase") %>%  
+  group_by(participant_id) %>% 
+  summarise(
+    avgRating_condition0 = mean(rating[condition == 0], na.rm = TRUE),
+    avgRating_condition1 = mean(rating[condition == 1], na.rm = TRUE),
+    diff_condition_0_1 = avgRating_condition0 - avgRating_condition1  
+  ) %>%
+  arrange(desc(diff_condition_0_1))
+
+print(participantBy_averageRating_accCase, n = Inf)
+
+```
+
+The table provides detailed numerical insights for each participant.
+The average ratings in condition 0 range from 1.8 (P79) to 7.0 (P15, P18, P82, P99), while the ratings in condition 1 range from 1.0 (P7, P17, P19, P33, P43, P50, P57, P67, P70, P71, P78, P80, P84, P87, P102) to 4.2 (P46).
+The "diff_condition_0_1" column shows the differences between conditions, consistently indicating a substantial decrease in ratings from condition 0 to condition 1 for almost all participants.
+Most participants experience a rating drop between 3.2 and 5.8 points, demonstrating a remarkably uniform pattern of response differences across the dataset.
+
+Among all participants, P79 stands out as showing minimal difference between condition 0 and condition 1 sentences.  
+Given this unusual pattern, we examine P79's ratings of anchors and fillers, even though this participant wasn't flagged in our earlier screening.
+
+```{r fillerPlotP79, warning=FALSE, fig.cap="Comparison of P79's ratings (green line) versus average ratings (black line) for practice/anchor items. The average pattern shows a characteristic dip for anchor sentence 2, while P79 displays a notable deviation from this pattern."}
+
+# Filter and prepare data
+participant_data <- experimentResult %>%
+  filter((participant_id == "P79" & experiment_id == "Practice" & item_id %in% 1:3) |
+         (participant_id != "P79" & experiment_id == "Practice" & item_id %in% 1:3)) %>%
+  group_by(item_id, participant_id == "P79") %>%
+  summarise(
+    rating = mean(rating, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    participant_id = ifelse(`participant_id == "P79"`, "P79", "Average"),
+    comparison = "Average vs P79"
+  )
+
+# Create plot
+ggplot(participant_data, aes(x = item_id, y = rating, group = participant_id, color = participant_id)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("Average" = "black", "P79" = "#4DAF4A")) +
+  labs(
+    title = "Ratings of Practice Items: P79 vs Average",
+    x = "Anchor Sentence ID", 
+    y = "Rating",
+    color = "Participant ID"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14, face = "bold"),
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = element_text(size = 12),
+    panel.grid.minor = element_blank()
+  )
+```
+
+
+```{r fig.cap="Ratings of selected filler items comparing P79 (green line) with average ratings (black line) across 16 items."}
+# Prepare data for P79 vs average comparison
+plot_data <- experimentResult %>%
+  filter(item_id %in% 1:16, 
+         experiment_id == "Filler",
+         participant_id %in% c("P79", unique(experimentResult$participant_id))) %>%
+  group_by(item_id, is_p79 = participant_id == "P79") %>%
+  summarise(
+    rating = ifelse(first(is_p79), first(rating), mean(rating, na.rm = TRUE)),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    participant_id = ifelse(is_p79, "P79", "Average"),
+    comparison = "Average vs P79"
+  )
+
+# Create plot
+ggplot(plot_data, aes(x = item_id, y = rating, group = participant_id, color = participant_id)) + 
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("Average" = "black", "P79" = "#4DAF4A")) +
+  labs(
+    title = "Ratings of Selected Filler Items: P79 vs Average",
+    x = "Item ID",
+    y = "Rating",
+    color = "Participant ID"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14, face = "bold"),
+    panel.spacing = unit(3, "lines"),
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "bottom",
+    legend.text = element_text(size = 12),
+    plot.margin = margin(1, 1, 1, 1),
+    panel.grid.minor = element_blank(),
+    legend.margin = margin(t = 1)
+  )
+```
+
+P79's ratings exhibit a polarized pattern, primarily using extreme high/low values while avoiding middle-range ratings (3-5).  
+This tendency may explain why the participant assigned unusually low ratings to some condition 0 sentences - sentences that many participants found natural but sometimes rated in the middle range.
+Although P79's anchor/filler ratings raise validity concerns, we include this participant in our analysis as they weren't identified as unusual through our three diagnostic checks.
+
+
+As mentioned in Section \@ref(Participants), 22 out of 84 participants seem to be able to manage basic conversation in a language other than Japanese (for simplicity, this paper refers to these participants as bilingual speakers/participants, in contrast to the others, who are referred to as monolingual speakers/participants).
+To visually explore whether foreign language knowledge affects participants' grammaticality judgments, Figure \@ref(fig:foreignLanguageEffect) compares the distribution of ratings across conditions between monolingual and bilingual participants.
+
+
+
+```{r foreignLanguageEffect, fig.cap="Ratings across conditions for AccCase items by participants' language background. The figure compares condition effects between monolingual Japanese speakers (left panel) and bilingual speakers of Japanese and a foreign language (right panel), showing nearly identical patterns of high ratings for condition 0 (pink) and low ratings for condition 1 (teal) regardless of language background."}
+ggplot(experimentResult %>% filter(experiment_id == "AccCase"), aes(x = factor(condition), y = rating)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Ratings Across Conditions between Monolingual and Bilingual Participants"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  ) +
+  facet_wrap(~ foreignLanguage, labeller = labeller(foreignLanguage = c("0" = "Participants who speak no foreign language", "1" = "Participants who speak a foreign language")))
+```
+
+The figure presents a two-panel scatter plot comparing how monolingual and bilingual Japanese speakers rate AccCase items across two conditions.
+Each panel displays individual rating data points on a scale from 0 to 7, with pink dots representing condition 0 and teal dots representing condition 1.
+While bilingual group shows larger 95% confidence intervals for the ratings of both conditions' sentences (partly because of the smaller sample size), both participant groups show remarkably similar slope and position of the trend lines. 
+This suggests that knowledge of a foreign language has minimal impact on participants' judgments of main items.
+
+
+To quantify any potential differences between monolingual and bilingual participants, we calculate summary statistics for each group's ratings across both experimental conditions.
+
+
+```{r}
+# Summary statistics for participants who speak Chinese, English, or Spanish in addition to Japanese
+summary_stats_foreignLanguage <- experimentResult %>% 
+  filter(experiment_id == "AccCase") %>%  # Filter only the "AccCase" experiment
+  filter(foreignLanguage %in% c("1")) %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE), 
+    standard_deviation = sd(rating, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_foreignLanguage)
+
+# Summary statistics for all other participants
+summary_stats_noForeignLanguage <- experimentResult %>%
+  filter(experiment_id == "AccCase") %>%  # Filter only the "AccCase" experiment
+  filter(foreignLanguage %in% c("0")) %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE), 
+    standard_deviation = sd(rating, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_noForeignLanguage)
+```
+
+For bilingual participants who speak Chinese, English, or Spanish in addition to Japanese (n = 110), condition 0 sentences received an average rating of 5.75 (SD=1.47), while condition 1 sentences received a substantially lower average rating of 2.25 (SD = 1.58).
+Similarly, for monolingual Japanese speakers (n=309), condition 0 sentences received an average rating of 5.62 (SD = 1.68), while condition 1 sentences received an average rating of 2.02 (SD = 1.39).
+These numerical results confirm the visual patterns observed in the figure, with very similar ratings in condition 0 (a difference of only 0.13 points) and condition 1 (a difference of only 0.23 points).
+The standard deviations are also comparable between groups, indicating similar levels of response variability regardless of language background.
+These findings suggest that knowledge of foreign languages does not meaningfully influence participants' judgments of case marker acceptability in Japanese (but see Section \@ref(Statistical-analysis)).
+
+
+Next, we turn to the difference in ratings of main items between speakers of Eastern and Western Japanese dialects.
+
+
+```{r dialectEffect, fig.cap="Ratings across conditions for AccCase items by dialect. The figure compares condition effects between Eastern and Western Japanese dialects, showing similar downward trends from condition 0 (pink) to condition 1 (teal) but with subtle differences in rating patterns based on dialect."}
+
+ggplot(experimentResult %>% filter(experiment_id == "AccCase"), aes(x = factor(condition), y = rating)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Rating",
+    color = "Condition",
+    title = "Ratings Across Conditions for AccCase Items by Dialect"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  ) +
+  facet_wrap(~ dialect, labeller = labeller(dialect = c("east" = "East Dialect", "west" = "West Dialect")))
+```
+
+The figure presents a two-panel scatter plot comparing how speakers of Eastern and Western Japanese dialects rate main items across two conditions.
+Each panel displays individual rating data points on a scale from approximately 0 to 7, with pink dots representing condition 0 and teal dots representing condition 1.
+While both dialect groups show a clear decline in ratings from condition 0 to condition 1, there are subtle differences between the groups.
+Western dialect speakers give slightly higher ratings for both condition 0 and condition 1 sentences compared to Eastern dialect speakers, although the two trend lines appear almost parallel, suggesting a similar condition effect and the lack of a **condition x dialect** interaction.
+Despite these dialectal differences, the overall pattern remains consistent—higher ratings in condition 0 (mostly between 4–7) and lower ratings in condition 1 (mostly between 0–3)—indicating that while dialect influences the ratings to some degree, the fundamental effect of condition persists across dialectal boundaries.
+
+The average rating values for each group of speakers, along with their standard deviations, are provided below.
+
+
+
+```{r}
+# Summary statistics for participants who speak Eastern Japanese dialects
+summary_stats_eastern <- experimentResult %>%
+  filter(experiment_id == "AccCase") %>%
+  filter(dialect == "east") %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE), 
+    standard_deviation = sd(rating, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_eastern)
+
+# Summary statistics for participants who speak Western Japanese dialects
+summary_stats_western <- experimentResult %>%
+  filter(experiment_id == "AccCase") %>%  
+   filter(dialect == "west") %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE), 
+    standard_deviation = sd(rating, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_western)
+```
+
+The tables provide summary statistics for the ratings of main items, separated by dialect group.
+For Eastern Japanese dialect speakers (n=233), condition 0 sentences received an average rating of 5.38 (SD = 1.80), while condition 1 sentences received a substantially lower average rating of 1.91 (SD = 1.34).
+Similarly, for Western Japanese dialect speakers (n=186), condition 0 sentences received an average rating of 6.01 (SD = 1.31), while condition 1 sentences received an average rating of 2.28 (SD = 1.55).
+These numerical results confirm the visual patterns observed in Figure \@ref(fig:dialectEffect), with Western dialect speakers giving slightly higher ratings in both conditions compared to Eastern dialect speakers (a difference of 0.63 points in condition 0 and 0.37 points in condition 1).
+The standard deviations indicate somewhat greater variability in Eastern speakers' ratings for condition 0, while Western speakers show slightly more variability in condition 1.
+Despite these minor dialectal differences, both groups demonstrate a clear and substantial preference for condition 0 over condition 1, with mean differences of 3.47 points for Eastern speakers and 3.73 points for Western speakers.
+
+
+
+Finally, to investigate potential experimental artifacts related to task duration, I will examine whether participants’ ratings for each condition systematically changed as they progressed through the experiment.
+Such changes could arise from factors like fatigue, increased familiarity with the rating scale, or evolving response strategies, potentially affecting the validity of our measurements.
+To conduct this investigation, I will add an order column to our dataframe **experimentResult**, representing the sequence in which each participant completed the experimental tasks.
+
+```{r}
+# First ensure timestamps are properly formatted as datetime objects
+experimentResult$timestamp <- as.POSIXct(experimentResult$timestamp)
+
+# Create order column by participant
+experimentResult <- experimentResult %>%
+  group_by(participant_id) %>%
+  arrange(timestamp, .by_group = TRUE) %>%
+  mutate(order = row_number()) %>%
+  ungroup()
+
+head(experimentResult %>% 
+     arrange(participant_id, experiment_id, item_id, order) %>%
+     select(participant_id, timestamp, order))
+```
+
+The figure below shows how participant ratings evolved over the course of the experiment.
+
+
+```{r fig.cap="Effect of presentation order on ratings by condition. The plot shows consistent separation between condition 0 (pink points) and condition 1 (teal points) across all presentation orders. While condition 0 ratings remain relatively stable, condition 1 shows a slight positive trend as presentation order increases, suggesting a potential interaction between condition and order."}
+ggplot(experimentResult %>% filter(experiment_id == "AccCase"), aes(x = order, y = rating, color = factor(condition))) +
+  geom_point(
+    alpha = 0.5,
+    position = position_jitter(width = 0.2)
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    linewidth = 1
+  ) +
+  scale_color_discrete(
+    labels = c("Condition 0", "Condition 1")
+  ) +
+  labs(
+    x = "Presentation Order",
+    y = "Rating",
+    color = "Condition",
+    title = "Effect of Presentation Order on Ratings by Condition"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12)
+  )
+```
+
+
+The figure displays a scatter plot examining the relationship between presentation order (x-axis) and participant ratings (y-axis) for both experimental conditions.
+Each data point represents an individual rating, with condition 0 shown in pink and condition 1 in teal.
+The plot reveals a clear and consistent separation between the two conditions across all presentation orders, with condition 0 ratings clustering around the higher end of the scale (approximately 5.5–6) and condition 1 ratings clustering around the lower end (approximately 2).
+Both conditions show slight upward trends as presentation order increases, indicated by the gently sloping trend lines with confidence intervals (shaded areas).
+This positive slope appears somewhat more pronounced for condition 1, suggesting that participants may have become slightly more lenient in their judgments of the dispreferred condition as the experiment progressed.
+Despite this subtle order effect, the substantial gap between conditions remains stable throughout the experiment, confirming that the observed condition effect is robust and not primarily attributable to task duration artifacts.
+The consistent separation between conditions across presentation orders provides evidence that participants maintained their sensitivity to the linguistic contrast being tested throughout the experimental session.
+
+
+
+
+
+
+
+## Statistical Analysis {#Statistical-analysis}
+
+We first transform the rating values into their z-score counterparts to normalize the data and minimize scale biases.
+This transformation makes it easier to compare ratings across participants and items.
+
+
+
+
+```{r}
+# Calculate z-scores within participants
+experimentResult$rating_z <- ave(experimentResult$rating, experimentResult$participant_id, FUN = function(x) as.numeric(scale(x)))
+
+experimentResult %>% 
+  select(experiment_id, participant_id, item_id, condition, rating, rating_z) %>% 
+  print()
+```
+
+To verify that the z-score transformation was implemented correctly, we will calculate the mean and standard deviation of the z-transformed ratings for each participant. 
+These values should theoretically approximate 0 and 1, respectively, if the standardization was performed properly.
+
+
+
+```{r}
+# Calculate mean and standard deviation of z-scores by participant
+zscore_stats <- experimentResult %>%
+  group_by(participant_id) %>%
+  summarise(
+    mean_rating_z = mean(rating_z, na.rm = TRUE),
+    sd_rating_z = sd(rating_z, na.rm = TRUE)
+  )
+
+print(zscore_stats)
+```
+
+The results confirm that the z-score transformation was conducted correctly, with each participant's standardized ratings showing a mean effectively equal to zero (with only negligible rounding error) and a standard deviation of exactly 1.
+This standardization successfully normalizes individual response tendencies across participants, enabling more reliable comparisons between experimental conditions by accounting for differences in how participants use the rating scale.
+
+While we have already excluded some unusual participants in the previous section, we will conduct an additional check to identify potential outliers by examining extreme z-score values.
+This analysis counts instances where participants' standardized ratings exceeded an absolute value of 3, representing highly unusual response patterns that fall more than 3 standard deviations from their mean ratings.
+
+
+```{r}
+# Count extreme z-scores by participant
+extreme_z_scores <- experimentResult %>% 
+  group_by(participant_id) %>% 
+  summarise(
+    extreme_count = sum(abs(rating_z) > 3, na.rm = TRUE)
+  ) %>%
+  filter(extreme_count > 0)
+
+if(nrow(extreme_z_scores) > 0) {
+  print(extreme_z_scores)
+} else {
+  cat("No participants have extreme z-scores (> |3|).\n")
+}
+```
+
+The analysis indicates that no participants demonstrated extreme z-scores exceeding the |3| threshold, suggesting the absence of severe outliers in our dataset.
+This finding confirms that our prior participant exclusion criteria were effective, and the remaining data represents consistent response patterns without anomalous ratings that would require additional filtering or closer examination.
+
+Next, we will filter the dataset to include only main items.
+
+
+```{r}
+experimentResult_AccCase <- experimentResult %>%
+  filter(experiment_id == "AccCase")
+```
+
+To confirm that the filtering was conducted correctly, we check the number of rows in the dataset before and after the filtering.
+
+```{r}
+# Number of rows in the original dataset
+nrow_original <- nrow(experimentResult)
+print(paste("Number of rows in original dataset:", nrow_original))
+
+# Number of rows in the filtered dataset
+nrow_filtered <- nrow(experimentResult_AccCase)
+print(paste("Number of rows in filtered dataset:", nrow_filtered))
+
+```
+
+There are 84 participants, and each participant rated 33 items (3 anchors, 10 main items, and 20 fillers).
+Therefore, the number of rows in the original dataset (2772) is correct.
+However, the number of rows in the filtered dataset (838) is unexpected, as it should be 840.
+Using the code below, we will identify participants with incomplete or inconsistent data by comparing the number of items they rated in each experiment type (AccCase, Filler, and Practice) to the expected counts.
+
+```{r}
+# Step 1: Count items rated by each participant for each experiment_id
+item_counts <- experimentResult %>%
+  group_by(participant_id, experiment_id) %>%
+  summarise(
+    count = n(),  # Number of items rated
+    .groups = "drop"
+  )
+
+# Step 2: Define expected counts and identify incorrect counts
+expected_counts <- data.frame(
+  experiment_id = c("AccCase", "Filler", "Practice"),
+  expected_count = c(10, 20, 3)
+)
+
+item_counts <- item_counts %>%
+  left_join(expected_counts, by = "experiment_id")
+
+incorrect_counts <- item_counts %>%
+  filter(count != expected_count)
+
+# Step 3: Summarize the results
+summary_incorrect_counts <- incorrect_counts %>%
+  group_by(participant_id) %>%
+  summarise(
+    missing_types = paste(experiment_id, collapse = ", "),  # Types with incorrect counts
+    .groups = "drop"
+  )
+
+print(summary_incorrect_counts)
+```
+
+The analysis identified two participants, P52 and P99, who had discrepancies in the number of items they rated for the AccCase and Filler experiment types compared to the expected counts.
+To investigate further, the next step filters the dataset to focus on these two participants and calculates the actual number of items they rated for each experiment type (AccCase, Filler, and Practice). This will help confirm the specific missing or extra items and ensure the accuracy of the data before proceeding with further analysis.
+
+
+```{r}
+experimentResult %>%
+  filter(participant_id %in% c("P52", "P99")) %>%
+  group_by(participant_id, experiment_id) %>%
+  summarise(actual_count = n(), .groups = "drop")
+
+```
+
+The results show that participants P52 and P99 had discrepancies in their item counts for the AccCase and Filler experiment types.
+Specifically, both participants rated 9 items for AccCase (1 fewer than expected) and 21 items for Filler (1 more than expected), while their counts for Practice were correct.
+To further investigate these discrepancies, the next step filters the dataset to focus on these two participants and retrieves their detailed responses, including item_id, condition, and rating, sorted by participant_id and experiment_id. 
+This will allow us to examine the specific items they rated and identify any patterns or errors in their responses.
+
+
+
+```{r}
+experimentResult %>%
+  filter(participant_id %in% c("P52", "P99")) %>%
+  select(participant_id, experiment_id, item_id, condition, rating) %>%
+  arrange(participant_id, experiment_id)%>%
+  print(n=Inf)
+```
+
+The detailed results show that participants P52 and P99 rated certain items twice (e.g., Filler item 19 for P52 and Filler items 13 and Practice item 1 for P99) and missed one AccCase item each (item 8 for P52 and item 10 for P99).
+These errors are likely due to collection issues caused by the Heroku app (the platform used to run the experiment) rather than flaws in the experimental design.
+If the issue were design-related, more participants assigned the same item sets would have exhibited similar patterns.
+While the lack of two ratings for main items is unfortunate, it is unlikely to significantly impact the statistical analysis.
+Additionally, these participants were not flagged in the earlier step where unusual participants were identified for exclusion.
+Therefore, these errors do not warrant excluding these participants from the analysis, and the filtering was conducted appropriately.
+
+Now that we have filtered the dataset to include only main items, we will first examine plots showing the difference between condition 0 and condition 1 across the dataset **experimentResult_AccCase**, for each item and for each participant.
+We will begin by examining the difference between the two conditions across the dataset:
+
+
+
+```{r fig.cap="Z-transformed ratings for AccCase items by condition. Condition 0 (pink) shows predominantly positive z-scores (clustered around 0.5-1), while condition 1 (teal) shows predominantly negative z-scores (around -1), with a clear downward trend indicated by the regression line."}
+ggplot(experimentResult_AccCase, aes(x = factor(condition), y = rating_z)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Z-Transformed Ratings Across Conditions for AccCase Items"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  )
+```
+
+```{r}
+# Calculate summary statistics
+summary_stats_z <- experimentResult_AccCase %>% 
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating_z, na.rm = TRUE), 
+    standard_deviation = sd(rating_z, na.rm = TRUE)
+  )
+
+print(summary_stats_z)
+```
+
+The z-transformed ratings plot reinforces the pattern observed in the raw ratings while controlling for individual differences in how participants used the rating scale. 
+After standardization, condition 0 shows a mean z-score of 0.739 (SD = 0.617), while condition 1 shows a mean z-score of -0.771 (SD = 0.542). 
+The difference in z-transformed rating of 1.51 between conditions represents the effect size after accounting for participant-specific rating tendencies (such as some participants consistently using higher or lower parts of the scale). 
+This standardized difference corroborates the substantial effect we observed in the raw ratings (3.58 points), while providing additional confidence that the effect is robust even when controlling for individual rating patterns. 
+The similar standard deviations in the z-transformed data (0.617 vs. 0.542) further confirm our earlier observation about consistent variability across conditions.
+
+
+Next, I examine the same by-item patterns using z-transformed ratings to control for individual differences in how participants used the rating scale.
+This transformation allows us to verify whether the effects observed in the raw ratings remain consistent when accounting for participant-specific rating tendencies.
+
+
+```{r fig.cap="Z-transformed ratings by condition for each of the 10 items. All items show consistent patterns with positive z-scores in condition 0 (pink) and negative z-scores in condition 1 (teal), with similar downward trends across all panels."}
+# Custom labeller to add "item" before the item number
+custom_labeller <- function(labels) {
+  labels$item_id <- paste0("item ", labels$item_id)
+  labels
+}
+
+ggplot(experimentResult_AccCase, aes(x = factor(condition), y = rating_z)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +  
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +  # Trend line with confidence intervals
+  facet_wrap(~ item_id, labeller = custom_labeller) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +  
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Z-Transformed Ratings Across Condition for Each Item"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  
+  )
+
+```
+
+The z-transformed ratings by item provide additional confidence in our findings by controlling for individual rating patterns while revealing the same consistent effect across all items.
+After standardization, each item shows ratings clustered around positive z-scores (approximately 0.5 to 1.5) in condition 0 and negative z-scores (approximately -0.5 to -1.5) in condition 1.
+The uniformity of this pattern in the standardized data is particularly noteworthy—all 10 items show remarkably similar effect sizes in their z-transformed ratings, with comparable spreads of data points around the trend lines.
+However, there are notable item-specific variations in both the baseline ratings (intercepts) at condition 0 and the magnitude of change between conditions (slopes), suggesting the need to include by-item random intercepts and random slopes for condition in our statistical model.
+This systematic item-level variation, combined with the consistency in the overall directional pattern, suggests that the effect we observed in the raw ratings is not driven by how individual participants used the rating scale but rather reflects a genuine and robust difference between conditions that holds across all items while allowing for item-specific adjustments.
+
+To quantify the standardized effects for each item, let's examine the exact z-transformed means and differences between conditions.
+
+
+
+```{r}
+# Calculate summary statistics for each AccCase items.
+itemBy_averageRating_accCase_z <- experimentResult_AccCase %>%
+  group_by(item_id) %>%  
+  summarise(
+    avgRating_condition0 = mean(rating_z[condition == 0], na.rm = TRUE),
+    avgRating_condition1 = mean(rating_z[condition == 1], na.rm = TRUE),
+    diff_condition_0_1 = avgRating_condition0 - avgRating_condition1 
+  ) 
+
+print(itemBy_averageRating_accCase_z, n = Inf)
+```
+
+The z-transformed ratings provide a standardized measure of the effect size for each item.
+In condition 0, all items show positive z-scores ranging from 0.37 to 1.16, while condition 1 consistently shows negative z-scores ranging from -1.08 to -0.28.
+The differences between conditions in standardized units are remarkably consistent across items, ranging from 1.18 to 1.72 standard deviations.
+This consistency in effect sizes is particularly noteworthy because it shows that the magnitude of the difference between conditions remains stable even after controlling for individual rating patterns. 
+Items 6 shows the largest standardized difference (1.72), while item 10 shows a somewhat smaller but still substantial effect (1.18).
+These standardized differences provide a scale-independent measure of the effect that complements our earlier observations about the raw rating differences.
+
+We now turn to individual participant responses using z-transformed ratings to assess the consistency of the effect while controlling for individual rating scales.
+
+
+
+```{r fig.width=15, fig.height=15, fig.cap="Z-transformed ratings by condition for individual participants. Each panel shows one participant's standardized ratings comparing condition 0 (pink points) to condition 1 (teal points). All 84 participants show consistent downward trends between conditions, with confidence intervals shown in gray shading, indicating a robust effect across participants despite individual variation in baseline ratings and effect magnitudes."}
+ggplot(
+  experimentResult_AccCase %>%
+    mutate(participant_id = fct_relevel(participant_id, mixedsort(unique(participant_id)))),
+  aes(x = factor(condition), y = rating_z)
+) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) + 
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +  
+  facet_wrap(~ participant_id, ncol = 8) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +  
+  scale_y_continuous(limits = c(-2.5, 2.5)) +
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Z-Transformed Ratings Across Condition for Each Participant"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  
+  )
+```
+
+The z-transformed ratings by participant provide compelling evidence that the effect remains robust even after accounting for individual rating tendencies.
+In the standardized scale, nearly all participants show positive z-scores (typically between 0.5 and 1.5) for condition 0 and negative z-scores (typically between -0.5 and -1.5) for condition 1.
+While the general pattern is consistent, there are noticeable variations in both baseline ratings at condition 0 and the magnitude of change between conditions across participants, indicating the need for by-participant random intercepts and random slopes for condition in our statistical model.
+The presence of this systematic participant-level variation, combined with the overall consistency in directional effects, suggests that the difference between conditions is not driven by a subset of participants with extreme rating patterns.
+This uniformity in the z-transformed data strengthens our earlier observations by demonstrating that the effect persists even when each participant's ratings are standardized relative to their own rating scale usage.
+
+To quantify the standardized effects for each participant, let's examine the exact z-transformed means and differences between participants.
+
+
+```{r}
+participantBy_averageRating_accCase_z <- experimentResult_AccCase %>%
+  group_by(participant_id) %>% 
+  summarise(
+    avgRating_condition0 = mean(rating_z[condition == 0], na.rm = TRUE),
+    avgRating_condition1 = mean(rating_z[condition == 1], na.rm = TRUE),
+    diff_condition_0_1 = avgRating_condition0 - avgRating_condition1  
+  ) %>%
+  arrange(desc(diff_condition_0_1))
+
+print(participantBy_averageRating_accCase_z, n = Inf)
+
+```
+
+The z-transformation reveals patterns that weren't immediately apparent in the raw ratings.
+While the raw scores showed varying absolute differences, the z-scores demonstrate that participants like P50, P99, and P62 exhibited the most extreme standardized differences (>2 standard deviations) between conditions.
+This standardization also highlights that even participants with different raw rating ranges showed similar relative shifts—for instance, P73 and P78 have identical standardized differences (1.94) despite having quite different raw rating patterns.
+The z-scores range from -1.22 to 1.40 across conditions, with most participants showing between 1.2 and 2.0 standard deviations of difference between conditions.
+This standardized view suggests that while participants varied in their use of the rating scale, the relative magnitude of the effect was remarkably consistent across participants when controlling for individual rating tendencies.
+
+Next, we will examine the effect of participants' foreign language knowledge on their rating_z values.
+While Section \@ref(Data-preprocessing) suggested that such an effect is minimal when analyzing raw rating values, we might find a different result when analyzing the standardized rating values.
+
+
+
+
+```{r foreignLanguageEffectZ, fig.cap="Ratings across conditions for AccCase items by participants' language background. The figure compares condition effects between monolingual Japanese speakers (left panel) and bilingual speakers of Japanese and a foreign language (right panel), showing nearly identical patterns of high ratings for condition 0 (pink) and low ratings for condition 1 (teal) regardless of language background."}
+ggplot(experimentResult_AccCase, aes(x = factor(condition), y = rating_z)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Rating_z Across Conditions between Monolingual and Bilingual Participants"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  ) +
+  facet_wrap(~ foreignLanguage, labeller = labeller(foreignLanguage = c("0" = "Participants who speak no foreign language", "1" = "Participants who speak a foreign language")))
+```
+
+The figure presents a two-panel scatter plot comparing z-transformed ratings across conditions between monolingual and bilingual participants. 
+Each panel displays individual z-transformed rating data points on a scale from approximately -2 to 2, with pink dots representing condition 0 and teal dots representing condition 1. 
+Both participant groups show similar negative slopes from condition 0 to condition 1 as indicated by the blue trend lines. 
+However, upon closer examination, there appears to be a slightly more pronounced separation between conditions for bilingual participants compared to monolingual participants. 
+For bilingual participants, condition 0 ratings cluster slightly higher on the z-scale while their condition 1 ratings appear somewhat less negative compared to monolingual participants. 
+This subtle difference suggests that standardization may reveal patterns not apparent in the raw ratings in figure \@ref(fig:foreignLanguageEffect).
+
+To quantify these potential differences in standardized ratings between language groups, we calculate summary statistics for z-transformed ratings across both experimental conditions.
+
+
+```{r}
+# Summary statistics for participants who speak Chinese, English, or Spanish in addition to Japanese
+summary_stats_foreignLanguage_z <- experimentResult_AccCase %>% 
+  filter(foreignLanguage %in% c("1")) %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating_z, na.rm = TRUE), 
+    standard_deviation = sd(rating_z, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_foreignLanguage_z)
+
+# Summary statistics for all other participants
+summary_stats_noForeignLanguage_z <- experimentResult_AccCase %>%
+  filter(foreignLanguage %in% c("0")) %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating_z, na.rm = TRUE), 
+    standard_deviation = sd(rating_z, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_noForeignLanguage_z)
+```
+
+The tables provide detailed summary statistics for z-transformed ratings, separated by participants' language background. 
+For bilingual participants (n=110), condition 0 sentences received an average z-score of 0.791 (SD = 0.596), while condition 1 sentences received a substantially lower average z-score of -0.716 (SD = 0.586).
+For monolingual Japanese speakers (n=309), condition 0 sentences received an average z-score of 0.720 (SD = 0.624), while condition 1 sentences received an average z-score of -0.791 (SD = 0.526). 
+Unlike the raw ratings, these z-transformed values appear to reveal slightly larger differences between the participant groups. 
+The difference in z-score between condition 0 and condition 1 is 1.507 for bilingual participants but 1.511 for monolingual participants, suggesting monolingual and bilingual participants perceive a distinction between grammatical and ungrammatical sentences in nearly identical way. 
+On the other hand, bilingual participants show slightly higher z-scores for condition 0 (0.791 vs. 0.720) as well as condition 1 (-0.716 vs. -0.791). 
+While these differences remain small, the standardization process has made the effect of language background more apparent than was visible in the raw rating analysis.
+Given the above difference in rating of condition 0 senences, it is worth examining the statistical significance of the fixed effect of **foreignLanguage**, but not **condition x foreignLanguage**. 
+
+
+
+The predictor **foreignLanguage** is a between-participant variable, and thus we do not need to consider by-participant random slopes for **foreignLanguage**. 
+However, it is a within-item variable, and thus we should address if our model should include by-item random slopes for **foreignLanguage**.
+Therefore, we will examine the relationship between **condition** and z-transformed ratings across different items for both monolingual and bilingual participants to determine if by-item random slopes for **foreignLanguage** should be included in our model.
+
+
+
+```{r byItemForeignLanguageEffectZ, fig.height=15, fig.cap="Z-transformed ratings by **condition**, **item**, and **foreignLanguage**. Plots show ratings for monolingual (left panels) and bilingual (right panels) participants across 10 items. The two language groups show varying intercepts and slopes across items."}
+
+custom_labeller <- as_labeller(function(value) {
+  return(paste("Item", value))
+})
+
+ggplot(experimentResult_AccCase, aes(x = factor(condition), y = rating_z)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Rating_z by Condition, Item, and Language Background"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5),
+    strip.text = element_text(size = 8),
+    panel.spacing = unit(0.8, "lines")
+  ) +
+  facet_grid(
+    item_id ~ foreignLanguage, 
+    labeller = labeller(
+      foreignLanguage = c("0" = "Monolingual", "1" = "Bilingual"),
+      item_id = custom_labeller
+    )
+  )
+```
+
+The figure displays z-transformed ratings across 10 items with data points separated by condition (0/1) and Language background (monolingual/bilingual).
+The varying intercepts at condition 0 between language groups across items support including by-item random slopes for **foreignLanguage** in our initila model. 
+
+To further investigate the justification for including the aforementioned by-item random slope in our model, we can examine the numerical differences between conditions and language groups across items. 
+The table below provides the mean z-transformed ratings for each condition (0 and 1) across all items, separated by language background (monolingual and bilingual), along with the difference between conditions.
+
+
+```{r}
+# Calculate summary statistics for each AccCase item, split by foreignLanguage
+byItem_averageRating_accCase_z <- experimentResult_AccCase %>%
+  group_by(item_id, foreignLanguage) %>% 
+  summarise(
+    rating_condition0 = mean(rating_z[condition == 0], na.rm = TRUE),
+    rating_condition1 = mean(rating_z[condition == 1], na.rm = TRUE),
+    difference = rating_condition0 - rating_condition1  
+  ) %>%
+  mutate(foreignLanguage = ifelse(foreignLanguage == 0, "Monolingual", "Bilingual")) %>%
+  arrange(item_id, foreignLanguage)
+
+print(byItem_averageRating_accCase_z, n = Inf, width = Inf)
+```
+
+The table reveals notable variation in both baseline ratings (condition 0) and the magnitude of condition effects across items and language backgrounds. 
+For example, the condition 0 ratings for bilingual participants range from 0.279 (item 10) to 1.33 (item 4), while for monolingual participants they range from 0.340 (item 1) to 1.11 (item 4). 
+This line of numerical difference supports our visual assessment that by-item random slope for  **foreignLanguage** is justified in our initial model.
+
+Next, we will examine the effect of participants’ dialect on their values of **rating_z**. 
+
+```{r dialectEffectZ, fig.cap="Ratings across conditions for AccCase items by dialect. The figure compares condition effects between Eastern and Western Japanese dialects, showing similar downward trends from condition 0 (pink) to condition 1 (teal) but with subtle dialectal differences in rating patterns."}
+ggplot(experimentResult_AccCase, aes(x = factor(condition), y = rating_z)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Z-Transformed Ratings Across Conditions for AccCase Items by Dialect"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  ) +
+  facet_wrap(~ dialect, labeller = labeller(dialect = c("east" = "East Dialect", "west" = "West Dialect")))
+```
+
+Figure \@ref(fig:dialectEffectZ) shows z-transformed ratings across conditions for AccCase items by dialect. 
+The scatter plot displays data points for Eastern and Western Japanese dialects side by side, with condition 0 (shown in pink) and condition 1 (shown in teal) on the x-axis and z-transformed ratings on the y-axis. 
+Both dialects exhibit similar downward trends from condition 0 to condition 1, with most condition 0 ratings clustering between 0 and 1.5 on the z-scale, and condition 1 ratings clustering between -1.5 and 0. 
+The blue trend lines confirm this negative relationship between conditions in both dialects, though there appear to be subtle dialectal differences in the distribution patterns.
+
+The following tables provide the statistical summaries that quantify the observed differences between conditions across dialects.
+
+```{r}
+# Summary statistics for participants who speak Eastern Japan dialects
+summary_stats_eastern_z <- experimentResult_AccCase %>%
+  filter(dialect == "east") %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating_z, na.rm = TRUE), 
+    standard_deviation = sd(rating_z, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_eastern_z)
+
+# Summary statistics for participants who speak Western Japan dialects
+summary_stats_western_z <- experimentResult_AccCase %>%
+  filter(dialect == "west") %>%
+  group_by(condition) %>% 
+  summarise(
+    average_rating = mean(rating_z, na.rm = TRUE), 
+    standard_deviation = sd(rating_z, na.rm = TRUE),
+    n = n()
+  )
+
+print(summary_stats_western_z)
+```
+
+The tables present summary statistics for AccCase items across the two conditions (0 and 1) for both Eastern and Western Japanese dialects. 
+For condition 0, Eastern dialect speakers (n = 233) show an average z-transformed rating of 0.692 (SD = 0.696), while Western dialect speakers (n = 186) show a slightly higher average rating of 0.798 (SD = 0.495). 
+This difference in baseline ratings between dialects directly supports the inclusion of **dialect** as a fixed effect in our initial model. 
+Furthermore, the difference in how ratings change between conditions varies by dialect: 
+Eastern speakers show a larger decrease (-1.477) from condition 0 to condition 1 compared to Western speakers' decrease (-1.552). 
+This difference in effect size between dialects, even if it is very small, supports including the **condition x dialect** interaction in our initial statistical model. 
+These numerical differences align with the subtle dialectal variations observed in figure \@ref(fig:dialectEffectZ) and strengthen our approach to modeling the data with both **dialect** as a fixed effect and the **condition x dialect** interaction.
+
+
+
+To examine the variability in condition effects across individual test items and dialects, I present visualizations that will inform our random effects structure, particularly regarding by-item random slopes for **dialect** and the **condition x dialect** interaction.
+
+
+```{r byItemDialectEffectZ, fig.height=15, fig.cap="Z-transformed ratings by condition, item, and dialect. Each row presents data for one test item, comparing Eastern dialect speakers (left panels) and Western dialect speakers (right panels). The two dialect groups show varying intercepts and slopes across items."}
+
+custom_labeller <- as_labeller(function(value) {
+  return(paste("Item", value))
+})
+
+ggplot(experimentResult_AccCase, aes(x = factor(condition), y = rating_z)) +
+  geom_point(
+    aes(color = factor(condition)), 
+    position = position_jitter(width = 0.2), 
+    alpha = 0.5
+  ) +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm",  
+    se = TRUE, 
+    linewidth = 1, 
+    color = "blue"
+  ) +
+  scale_x_discrete(limits = c("0", "1"), labels = c("0", "1")) +
+  labs(
+    x = "Condition",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Rating_z by Condition, Item, and Dialect"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5),
+    strip.text = element_text(size = 8),
+    panel.spacing = unit(0.8, "lines")
+  ) +
+  facet_grid(
+    item_id ~ dialect, 
+    labeller = labeller(
+      dialect = c("east" = "East Dialect", "west" = "West Dialect"),
+      item_id = custom_labeller
+    )
+  )
+```
+
+The figure displays z-transformed ratings by condition (0 in pink, 1 in teal) across all 10 test items, with separate panels for Eastern and Western Japanese dialects. 
+The blue regression lines show varying degrees of downward trend from condition 0 to condition 1. 
+The steepness and positioning of these lines differ noticeably across items, suggesting item-specific differences in dialectal responses. 
+For example, item 4 shows a stronger condition effect for Eastern dialect speakers compared to Western dialect speakers, while item 8 displays the opposite pattern.
+
+
+To quantify the item-specific variability observed in the visualizations, we can examine the numerical differences between conditions and dialect groups across items. 
+
+```{r}
+# Calculate summary statistics for each AccCase item, split by dialect
+byItem_averageRating_accCase_z <- experimentResult_AccCase %>%
+  group_by(item_id, dialect) %>%
+  summarise(
+    rating_condition0 = mean(rating_z[condition == 0], na.rm = TRUE),
+    rating_condition1 = mean(rating_z[condition == 1], na.rm = TRUE),
+    difference = rating_condition0 - rating_condition1  
+  ) %>%
+  mutate(dialect = ifelse(dialect == "east", "Eastern", "Western")) %>%
+  arrange(item_id, dialect)
+
+print(byItem_averageRating_accCase_z, n = Inf, width = Inf)
+```
+
+The table breaks down average z-transformed ratings for all 10 test items across both dialects in both conditions, with calculated differences between conditions. 
+The data reveals considerable item-specific variation in dialectal effects. 
+Item 1 shows a dialect difference of 0.224 in condition 0 (Eastern: 0.226, Western: 0.550) and varying effect sizes (Eastern: 1.32, Western: 1.61). 
+Item 4 demonstrates even greater variation with Eastern speakers showing a 1.69 difference compared to Western speakers' 1.12. 
+This variability across items suggests that dialect influences both baseline ratings and responses to experimental manipulation, justifying the inclusion of by-item random slopes for **dialect** and **condition*dialect** interaction.
+
+
+
+
+
+Next, to investigate potential experimental artifacts related to task duration, I will examine whether participants' ratings for each condition systematically changed as they progressed through the experiment. 
+Such changes could arise from factors like fatigue, increased familiarity with the rating scale, or evolving response strategies, potentially affecting the validity of our measurements.
+
+
+```{r fig.cap="Effect of presentation order on z-transformed ratings by condition. The plot shows consistent separation between condition 0 (pink points, positive z-scores) and condition 1 (teal points, negative z-scores) across all presentation orders. While condition 0 ratings remain relatively stable, condition 1 shows a slight positive trend as presentation order increases."}
+ggplot(experimentResult_AccCase, aes(x = order, y = rating_z, color = factor(condition))) +
+  geom_point(
+    alpha = 0.5,
+    position = position_jitter(width = 0.2)
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    linewidth = 1
+  ) +
+  scale_color_discrete(
+    labels = c("Condition 0", "Condition 1")
+  ) +
+  labs(
+    x = "Presentation Order",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Effect of Presentation Order on Z-Transformed Ratings by Condition"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12)
+  )
+```
+
+The visualization reveals several noteworthy patterns in how participants' ratings evolved over the course of the experiment. 
+While condition 0 shows relatively stable ratings across presentation order (with a slight negative slope), condition 1 exhibits a modest positive trend as participants progress through the trials. 
+This divergence in rating trajectories between conditions suggests a potential interaction between experimental condition and presentation order. 
+Given these systematic patterns, our statistical model should include both a fixed effect for **order** and a fixed slope for the **condition × order** interaction to capture these temporal trends and their differential effects across conditions. 
+This will allow us to quantify both the general effect of presentation order and how this effect differs between conditions, providing a more complete understanding of how participants' responses evolved throughout the experiment.
+
+
+
+To examine whether the effect of presentation order varies across individual items, I will visualize the relationship between order and ratings separately for each item. 
+This item-level analysis is crucial as different stimuli might show distinct patterns of rating changes over time, potentially requiring the inclusion of by-item random slopes for **order** and its interaction with **condition** in our statistical models.
+
+
+```{r fig.width=10, fig.height=10, fig.cap="Effect of presentation order on z-transformed ratings by item. Each panel represents one of ten items, showing how ratings in condition 0 (pink) and condition 1 (teal) change across presentation order. Items display varying temporal trajectories, with some showing opposite slopes between conditions and others exhibiting more parallel trends, indicating substantial item-level heterogeneity in order effects."}
+
+custom_labeller <- function(labels){
+  labels$item_id <- paste0("item", labels$item_id)
+  labels
+}
+
+ggplot(experimentResult_AccCase, aes(x = order, y = rating_z, color = factor(condition))) +
+  geom_point(
+    alpha = 0.5,
+    position = position_jitter(width = 0.2)
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    linewidth = 1
+  ) +
+  facet_wrap(~ item_id, labeller = custom_labeller) +
+  scale_color_discrete(
+    labels = c("Condition 0", "Condition 1")
+  ) +
+  labs(
+    x = "Presentation Order",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Effect of Presentation Order on Ratings by Item"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    axis.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    strip.text = element_text(size = 9)
+  )
+```
+
+The visualization reveals considerable item-level variability in how ratings change across presentation order. 
+Two key patterns require attention in our model: (1) items show different trajectories for the effect of **order** in the baseline condition 0 (e.g., some items show declining trends while others remain relatively flat), and (2) the difference between conditions varies across items (e.g., items 5, 9, 10 show consistent positive slopes for condition 1 and negative slopes for condition 0, while item 7 shows the opposite). 
+This heterogeneity necessitates the inclusion of by-item random slopes for both **order** and the **condition × order** interaction in our statistical model. 
+The random slope for **order** will capture how the temporal effect varies across items specifically for condition 0 (our baseline condition), while the random slope for the **condition × order** interaction will model how the difference in **order** effects between conditions changes differently for each item. 
+
+
+
+Next, to explore individual differences in how participants' ratings change throughout the experiment, I will examine the relationship between presentation order and ratings for each participant separately. 
+This participant-level analysis is essential for determining whether to include by-participant random slopes for **order** and its interaction with **condition** in our statistical models, as participants might show different patterns of rating changes over time due to varying levels of fatigue or adaptation to the task.
+
+
+```{r byParticipantOrder, fig.width=15, fig.height=15, fig.cap="Effect of presentation order on z-transformed ratings by participant. Small multiples showing individual participant trends across presentation order for condition 0 (pink) and condition 1 (teal). Despite consistent separation between conditions, participants show variable responses to presentation order, though wide confidence intervals (gray shading) indicate high uncertainty in these individual estimates due to limited observations per participant."}
+ggplot(experimentResult_AccCase, aes(x = order, y = rating_z, color = factor(condition))) +
+  geom_point(
+    alpha = 0.5,
+    position = position_jitter(width = 0.2)
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    linewidth = 1
+  ) +
+  facet_wrap(~ participant_id, ncol = 8) +
+  scale_color_discrete(
+    labels = c("Condition 0", "Condition 1")
+  ) +
+  scale_y_continuous(limits = c(-2.5, 2.5)) +
+  labs(
+    x = "Presentation Order",
+    y = "Z-Transformed Rating",
+    color = "Condition",
+    title = "Effect of Presentation Order on Ratings by Participant"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    axis.text = element_text(size = 6),
+    axis.title = element_text(size = 8),
+    strip.text = element_text(size = 6)
+  )
+```
+
+The visualization reveals substantial variability in the order effects across participants. 
+However, the high degree of uncertainty in these individual estimates (as shown by the wide confidence bands) suggests that these trends may not be reliable given the limited number of observations per participant. 
+Given this high uncertainty, including by-participant random slopes for **order** and its interaction with **condition** would likely lead to an overparameterized model. 
+Therefore, a simpler random effects structure without those slopes would be more appropriate for our statistical analysis.
+
+To examine the difference in z-transformed ratings between condition 0 and condition 1, we will fit a linear mixed-effects model using the z-transformed ratings (**rating_z**) as a function of condition.
+Based on the above observations, our initial model also includes other fixed effects and random effects, and we will gradually simplify the model as we analyze it.
+More specifically, our initial model also includes the following fixed effects:
+
+
+- **foreignLaguage**: the effect of whether the participant is able to have a basic conversation in a language other than Japanese on **rating_z**
+- **dialect**: the effect of whether the participant speaks an Eastern or Western Japanese dialect on **rating_z**
+- **order**: the effect of the order of the item presentation on **rating_z**
+- **condition x dialect**: How the effect of **dialect** on **rating_z** differs between **condition** = 0 and **condition** = 1
+- **condition x order**: How the effect of **order** on **rating_z** differs between **condition** = 0 and **condition** = 1
+
+Our model does not include interactions such as **foreignLanguage x dialect**, **foreignLanguage x order**, and **dialect x order** to begin with, as these interactions do not seem to be theoretically justified.
+For example, it is not very sensible to assume that the effect of **order** differs based on the values of **foreignLanguage** or **dialect**.
+Our model does not include **condition x foreignLaguage** either, as we observed above that the effect of **foreignLaguage** on **rating_z** does not differ very much between **condition** = 0 and **condition** = 1.
+
+As for random effects, our initial model includes the following by-item random effects, which correspond to the fixed effects above.
+
+- **intercept**: the deviation in **rating_z** for each item when **condition** = 0, **foreignLanguage** = 0 (i.e., participants do not speak any second language), **dialect** = east, **order** = 0.
+- **condition**: the deviation in the **condition** effect (difference in **rating_z** between **condition** = 0 and **condition** = 1 when **foreignLanguage** = 0, **dialect** = east, **order** = 0) for each item.
+- **foreignLaguage**: the deviation in the **foreignLaguage** effect (difference in **rating_z** between **foreignLaguage** = 0 and **foreignLaguage** = 1 when **condition** = 0, **dialect** = east, **order** = 0) for each item.
+- **dialect**: the deviation in the dialect effect (difference in **rating_z** between **dialect** = east and **dialect** = west when **condition** = 0, **foreignLaguage** = 0, **order** = 0) for each item.
+- **order**: the deviation in the order effect (change in **rating_z** for each one-unit increase in order when condition = 0, foreignLaguage = 0, dialect = east) for each item.
+- **condition x dialect**: the deviation in how the effect of **dialect** on **rating_z** differs between **condition** = 0 and **condition** = 1 for each item.
+- **condition x order**: the deviation in how the effect of **order** on **rating_z** differs between **condition** = 0 and **condition** = 1 for each item.
+
+Our initial model includes only the following two by-participant random effects: 
+
+- **intercept**: the deviation in **rating_z** for each particiapnt when **condition** = 0, **foreignLanguage** = 0, **dialect** = east, **order** = 0.
+- **condition**: the deviation in the condition effect (difference in **rating_z** between **condition** = 0 and **condition** = 1 when **foreignLanguage** = 0, **dialect** = east, **order** = 0) for each participant. 
+
+There are no by-participant random slopes for **order** or interactions with **order** due to the small sample size and the high degree of uncertainty, as shown in Figure \@ref(fig:byParticipantOrder).
+On the other hand, **foreignLanguage** and **dialect** are between-participant predictors, so it is not sensible to include random slopes for **foreignLanguage**, **dialect**, or interactions with them.
+
+To determine the most appropriate model specification, we will begin with a complex model (model_a) that includes the aforementioned fixed and random effects as well as interactions, and progressively reduce the complexity as needed.
+
+
+```{r message= FALSE}
+# Load necessary package
+library(lmerTest) 
+```
+
+
+```{r}
+model_a <- lmer(rating_z ~ condition + foreignLanguage + dialect + order + condition*dialect + condition*order + 
+                  (1 + condition + foreignLanguage + dialect + order + condition*dialect + condition*order | item_id) + 
+                  (1 + condition | participant_id), 
+                data = experimentResult_AccCase)
+
+summary(model_a)$varcor
+```
+
+Model_a encountered two critical warnings: a boundary (singular) fit warning and a convergence failure with a negative eigenvalue (-1.6). 
+These warnings jointly indicate severe overparameterization and computational instability in estimating the random effects structure. 
+The singular fit suggests redundant parameters in the model, evidenced by the perfect negative correlation (-1.000) between the intercept and condition random slopes for participants, implying these parameters are not supported by the data. 
+The negative eigenvalue warning further reveals that the model's covariance matrix became non-positive definite during optimization, signaling that the random effects structure is mathematically untenable. 
+Both warnings confirm the model specification is too complex for the data, particularly regarding the by-participant random slopes for condition and the crossed random effects structure. 
+As an immediate remedy, we simplify the model by removing the by-participant random slope for **condition**, which addresses both the perfect correlation and the computational instability.
+
+
+```{r}
+model_b <- lmer(rating_z ~ condition + foreignLanguage + dialect + order + condition*dialect + condition*order + 
+                  (1 + condition + foreignLanguage + dialect + order + condition*dialect + condition*order | item_id) + 
+                  (1 | participant_id), 
+                data = experimentResult_AccCase)
+
+summary(model_b)$varcor
+```
+
+Model_b continues to show both a boundary (singular) fit warning and a convergence failure with a negative eigenvalue (-0.77), indicating persistent overparameterization issues. 
+The near-zero variance estimate for participant intercepts (0.00086) suggests this random effect is collapsing to zero, while the negative eigenvalue confirms fundamental instability in the model's covariance structure. 
+Together, these warnings demonstrate that the by-participant random intercept is not only statistically unnecessary (singular fit) but also mathematically problematic (negative eigenvalue), as it contributes to a non-positive definite covariance matrix. 
+We therefore proceed by removing the by-participant random intercept entirely, addressing both the redundancy indicated by the singular fit and the computational instability revealed by the negative eigenvalue warning.
+
+```{r}
+model_c <- lmer(rating_z ~ condition + foreignLanguage + dialect + order + condition*dialect + condition*order + 
+                  (1 + condition + foreignLanguage + dialect + order + condition*dialect + condition*order | item_id), 
+                data = experimentResult_AccCase)
+
+summary(model_c)$varcor
+```
+
+Model_c now shows only a boundary (singular) fit warning, with no negative eigenvalue warning present - unlike model_a and model_b. 
+This indicates that while some redundancy remains in the random effects structure (as evidenced by near-zero variance estimates for by-item **order** [0.0068] and **condition:order** [0.0102] slopes), the model's covariance matrix is now mathematically valid. 
+The singular fit specifically suggests these random slope terms are statistically unnecessary, as their minimal variance contributions approach zero. 
+We therefore proceed by removing the by-item random slopes for **order** and **condition:order**, which contributes to resolve the remaining overparameterization while maintaining a stable computational framework.
+
+
+```{r}
+model_d <- lmer(rating_z ~ condition + foreignLanguage + dialect + order + condition*dialect + condition*order + 
+                  (1 + condition + foreignLanguage + dialect + condition*dialect | item_id), 
+                data = experimentResult_AccCase)
+
+summary(model_d)$varcor
+```
+
+Model_d reintroduces convergence problems with two negative eigenvalues (-0.35 and -2.5) alongside a singular fit warning, indicating a return of fundamental matrix instability. 
+The variance-covariance structure reveals several problematic patterns: (1) an extremely high negative correlation (-0.993) between item-level intercepts and **condition** slopes, (2) near-perfect correlations (|r| > 0.94) involving **foreignLanguage** slopes, and (3) **condition:dialectwest** slopes showing more reasonable estimates. 
+The most severe issues stem from the **foreignLanguage** random effects, which show both minimal variance (0.038) and extreme correlations (-0.999 with condition). 
+This suggests the by-item **foreignLanguage** slopes are both statistically unnecessary and mathematically problematic. 
+As the next simplification step, we remove the by-item **foreignLanguage** random slopes while retaining the other random effects, which appears better supported by the data. 
+This approach targets the most unstable model component while preserving meaningful random effects structure.
+
+
+```{r}
+model_e <- lmer(rating_z ~ condition + foreignLanguage + dialect + order + condition*dialect + condition*foreignLanguage + condition*order + 
+                  (1 + condition + dialect + condition*dialect | item_id), 
+                data = experimentResult_AccCase)
+
+summary(model_e)$varcor
+```
+
+Model_e shows improvement by eliminating the negative eigenvalue warning, though a singular fit warning persists due to extreme correlations in the random effects structure (**condition** slope-intercept: r = -0.994; **dialectwest** slope-intercept: r = -0.990). 
+Given that **condition** is our primary theoretical focus while **dialect** is a control variable, we adopt a content-driven simplification approach: 
+(1) We retain **condition** as it is essential to our research questions, despite the high correlation. 
+(2) We remove the **dialectwest** random slope and its interaction **condition:dialectwest**, as these show similarly problematic correlations but are less theoretically central. 
+This prioritization achieves dual goals: maintaining our capacity to study how condition effects vary across items (our key analytical objective) while resolving the remaining computational issues through removal of less critical dialect-related terms. The improved convergence profile (no negative eigenvalues) suggests this approach should yield stable estimates while preserving the most theoretically meaningful random effects.
+
+```{r}
+model_f <- lmer(rating_z ~ condition + foreignLanguage + dialect + order + condition*dialect + condition*order + 
+                  (1 + condition | item_id), 
+                data = experimentResult_AccCase)
+
+summary(model_f)$varcor
+```
+
+Model_f represents a stable and properly converged final specification, with neither negative eigenvalue nor singular fit warnings. 
+The simplified random effects structure shows moderate, interpretable correlations between by-item intercepts and condition slopes (r = -0.636), with no extreme correlations or near-zero variance components. 
+The condition random slopes (SD = 0.108) demonstrate meaningful variability across items while remaining well-identified, and the residual variance (SD = 0.527) appropriately captures unexplained variability. 
+This clean convergence profile confirms we have achieved an appropriately complex yet estimable model that balances our theoretical interest in condition effects with the data’s capacity to support random effects estimation. The absence of diagnostic warnings suggests all parameters are both mathematically identifiable and statistically justified given the available data.
+
+Now that we successfully resolved the model’s singularity issues, we examine the fixed effects of model_f.
+
+
+```{r}
+summary(model_f)
+```
+
+The analysis reveals a statistically significant effect of **condition** (t = -16.132, p < .001), indicating a robust difference in z-transformed ratings between experimental conditions. 
+The negative estimate (-1.562) suggests that the target condition elicits substantially lower ratings compared to the control. 
+With the extremely low p-value and large effect size, we find decisive evidence that the experimental manipulation strongly influences participants' ratings.
+
+Significant but smaller effects emerged for two predictors:
+
+- Foreign language background (t = 2.056, p = .040): The positive estimate (0.086) indicates that bilingual participants provided slightly higher ratings than monolingual participants.
+- Dialect (t = 2.192, p = .029): Western Japanese dialect speakers rated main items marginally higher than Eastern dialect speakers (β = 0.114), though this effect is modest in magnitude.
+
+Non-significant effects include:
+
+- Presentation order (main effect: t = 0.476, p = .634; interaction with condition: t = 1.129, p = .259)
+- **Condition × dialect** interaction (t = -1.006, p = .315)
+- **Condition × order**  interaction (t = 1.129, p = .259)
+
+The random effects structure shows:
+
+- Moderate between-item variability in baseline ratings (SD = 0.277)
+- Smaller but meaningful variability in condition effects across items (SD = 0.108)
+- Expected negative correlation (r = -0.64) between intercepts and condition slopes
+
+Given these results, we next evaluate whether removing non-significant order-related terms significantly reduces model fit using likelihood ratio tests. 
+This hierarchical simplification approach maintains theoretical coherence while optimizing model parsimony.
+In doing so, we start with a fixed effect with the highest p-values, namely **order**. 
+Since we remove **order**, we also remove **condition*order** in model_f_1 below, which is compared with model_f. 
+
+
+
+
+```{r}
+model_f_1 <- lmer(rating_z ~ condition + foreignLanguage + dialect  + condition*dialect + 
+                  (1 + condition | item_id), 
+                data = experimentResult_AccCase)
+  
+anova(model_f, model_f_1)
+```
+
+The likelihood ratio test comparing model_f and model_f_1 yielded a non-significant result ($\chi^2$ = 4.60, p = 0.100), indicating that removing the order-related terms (both main effect and its interaction with condition) did not significantly worsen model fit. 
+While the chi-square statistic shows a marginal difference, the p-value exceeds conventional significance thresholds.
+Following the principle of parsimony, we prefer model_f_1 because:
+
+- It achieves comparable explanatory power (AIC = 1354.2 vs. 1353.6; BIC = 1396.8 vs. 1405.7) with greater efficiency.
+- It reduces model complexity by eliminating two unnecessary parameters (**order** and **condition × order**)
+- The non-significant test (p > .05) suggests these terms contribute little meaningful information
+- Simplified models are less prone to overfitting and more theoretically interpretable
+
+This result confirms that presentation order effects (both main and interactive) can be safely excluded from our model specification without sacrificing predictive accuracy.
+The following is the summary of model-f_1.
+
+```{r}
+summary(model_f_1)
+```
+
+Next, we examine the significance of **condition*dialect**.
+
+```{r}
+model_f_2 <- lmer(rating_z ~ condition + foreignLanguage + dialect + 
+                  (1 + condition | item_id), 
+                data = experimentResult_AccCase)
+anova(model_f_1, model_f_2)
+```
+
+The likelihood ratio test comparing model_f_1 and model_f_2 yielded a non-significant result ($\chi^2$ = 0.947, p = 0.331), indicating that removing the **condition × dialect** interaction term did not significantly worsen model fit. 
+Consistent with our model selection approach, we therefore prefer the more parsimonious model_f_2.
+
+
+The following is the summary of model_f_2. 
+
+
+```{r}
+summary(model_f_2)
+```
+
+Next, we examine the significance of **foreignLanguage**.
+
+
+```{r}
+model_f_3 <- lmer(rating_z ~ condition + dialect + 
+                  (1 + condition | item_id), 
+                data = experimentResult_AccCase)
+anova(model_f_2, model_f_3)
+```
+
+The likelihood ratio test comparing model_f_2 and model_f_3 yielded a significant result ($\chi^2$ = 4.00, p = 0.045), indicating that model_f_2 (with **foreignLanguage**) provides a significantly better fit to the data compared to model_f_3. 
+This suggests that:
+
+- Statistical Conclusion: The **foreignLanguage** predictor meaningfully improves model fit at p < .05
+- Model Selection Implications: Despite having one additional parameter, model_f_2 shows better fit (lower AIC = 1353.2 vs. 1355.2). The significant LRT (p = 0.045) meets conventional thresholds for retaining the term.
+- Substantive Interpretation: Foreign language background explains significant variance in ratings beyond condition and dialect. The effect should be retained in final model specifications
+
+Therefore, we prefer model_f_2 as it better captures the underlying data structure while maintaining parsimony.
+
+
+Next, we examine the significance of **dialect**.
+
+
+```{r}
+model_f_4 <-  lmer(rating_z ~ condition + foreignLanguage + 
+                  (1 + condition | item_id), 
+                data = experimentResult_AccCase)
+anova(model_f_2, model_f_4)
+```
+
+The likelihood ratio test comparing model_f_4 and model_f_2 yielded a significant result ($\chi^2$ = 4.4127, p = 0.03567), indicating that model_f_2 provides a significantly better fit to the data compared to model_f_4. 
+This suggests that including the predictor **dialect** in the model meaningfully improves its ability to explain the variability in the data. 
+Therefore, model_f_2 with **dialect** is preferred over model_f_4.
+
+Lastly, we examine the significance of **condition**.
+
+
+```{r}
+model_f_5 <- lmer(rating_z ~ foreignLanguage + dialect + 
+                  (1  | item_id), 
+                data = experimentResult_AccCase)
+anova(model_f_2, model_f_5)
+```
+
+The likelihood ratio test comparing model_f_5 and model_f_2 yielded a highly significant result ($\chi^2$ = 927.41, p<0.001), indicating that model_f_2 provides a substantially better fit to the data compared to model_f_5. 
+This suggests that including the predictor **condition** in the model significantly improves its ability to explain the variability in the data. 
+Therefore, model_f_2 with **condition** is strongly preferred over model_f_5.
+
+
+Next, we will conduct confidence interval analysis to further assess the reliability of our predictors.
+
+```{r}
+# Get 95% confidence intervals for the fixed effects
+confint(model_f_2, method = "profile", level = 0.95)
+```
+
+
+The 95% profile confidence intervals reveal the precision and statistical reliability of the estimates:
+
+- **Intercept**: 0.490 to 0.872 (significantly positive baseline rating)
+- **Condition**: -1.610 to -1.405 (strongly negative, robust effect)
+- **ForeignLanguage**: 0.002 to 0.165 (positive and statistically significant, excluding zero)
+- **Dialect(west)**: 0.005 to 0.150 (positive and significant, though smaller in magnitude)
+
+
+Lastly, to validate the statistical assumptions underlying our model, we will examine the distribution and behavior of residuals through diagnostic plots. 
+These visualizations help assess whether the residuals follow a normal distribution and exhibit homoscedasticity, which are key assumptions for the reliability of our statistical inferences.
+
+
+
+```{r histResiduals, fig.cap="Residual distribution from model_f_2, showing a relatively normal distribution with a slight central peak (leptokurtic tendency)."}
+# Extract residuals from the model
+residuals_model_f_2 <- residuals(model_f_2)
+
+hist(residuals_model_f_2, 
+     col = "lightblue",
+     main = "Histogram of Model_f_2 Residuals",
+     xlab = "Residuals")
+```
+
+```{r QQResiduals, fig.cap="Q-Q plot of residuals from model_f_2, showing moderate deviations from normality, particularly at the tails."}
+# QQ plot
+qqnorm(residuals_model_f_2)
+qqline(residuals_model_f_2, col = "red")
+```
+
+```{r residualsVsFitted, fig.cap="Residuals vs. fitted values for model_f_7, showing relatively consistent distribution around zero."}
+plot(fitted(model_f_2), residuals(model_f_2))
+abline(h = 0, col = "red")
+```
+
+
+
+```{r}
+shapiro.test(residuals_model_f_2)
+```
+
+
+The histogram of residuals (Figure \@ref(fig:histResiduals)) reveals a somewhat leptokurtic distribution with residuals concentrated around zero, suggesting minor deviation from perfect normality. 
+This observation is confirmed by the Q-Q plot (Figure \@ref(fig:QQResiduals)), which shows reasonable alignment with the theoretical normal distribution along the middle range but notable deviations at both tails, particularly at the upper tail. 
+The residuals versus fitted values plot (Figure \@ref(fig:residualsVsFitted)) demonstrates relatively consistent scatter around zero across the fitted range, indicating acceptable homoscedasticity. 
+However, there appears to be some clustering of points that may reflect the experimental conditions being tested. 
+The Shapiro-Wilk test (W = 0.98117, p-value = 6.413e-09) formally rejects the null hypothesis of normality. 
+While this indicates statistical departure from normality, it's worth noting that with our experimental design testing naturalness ratings between distinct conditions, such departures are expected. 
+As shown in Figure \@ref(fig:histRatingZ), the ratings exhibit a multimodal distribution with distinct peaks at approximately -1, 0, and 1, reflecting the predicted separation between experimental conditions, further supporting our experimental hypothesis and explaining the observed departure from normality in our residuals. 
+Despite these deviations, the core statistical inferences remain robust, as the experimental design naturally accommodates these distributional characteristics.
+
+
+
+
+```{r histRatingZ, fig.cap="Histogram of z-transformed ratings showing a bimodal distribution. The distinct peaks around -1 and +1 represent the separation between unnatural (condition 1) and natural (condition 0) sentences, respectively. This pattern supports the experimental hypothesis and explains the observed departures from normality in the model residuals"}
+hist(experimentResult_AccCase$rating_z, breaks = 7, main = "Histogram of Ratings", xlab = "Rating", col = "lightblue")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Conclusion {#Conclusion}
+
+This study investigated the acceptability of Japanese copular sentences with accusative case markers under different contextual conditions, using z-transformed ratings to control for individual differences in rating scale usage. 
+A linear mixed-effects model was employed to analyze the data, incorporating fixed effects for **condition**, **foreignLanguage**, and **dialect**, as well as random intercepts for **item_id**. The final model revealed a significant effect of **condition** (p < 0.001), confirming that sentences in condition 0 were rated significantly higher than those in condition 1. 
+Additionally, **foreignLanguage** (p = 0.042) and **dialect** (p = 0.035) were found to have small but significant effects on ratings, suggesting that participants’ language backgrounds and regional dialects subtly influenced their judgments.
+
+The marginal significance of **foreignLanguage** and **dialect** may reflect nuanced differences in how bilingual participants and speakers of Western Japanese dialects perceive grammatical acceptability compared to monolingual participants and Eastern dialect speakers. 
+However, these effects were small, indicating that the primary driver of acceptability judgments remains the contextual condition. 
+Future research could explore these factors in greater depth, as well as the role of linguistic background (i.e., whether or not participants have studied linguistics) and the interaction between dialect and specific grammatical features.
+
+The model’s residuals demonstrated acceptable homoscedasticity and a relatively normal distribution, with minor deviations at the tails, as confirmed by diagnostic plots. 
+These diagnostics support the validity of the model, which in turn supports that the acceptability of accusative case markers in Japanese copular sentences is strongly influenced by context, with consistent patterns across items and participants.
+The inclusion of **foreignLanguage** and **dialect** as predictors improved model fit, highlighting the importance of accounting for participants’ language and regional backgrounds in acceptability judgment studies.
+
+
+
+
+
+
+
+
